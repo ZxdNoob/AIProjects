@@ -1,0 +1,288 @@
+.stats-pc-bg {
+  min-height: 100vh;
+  width: 100vw;
+  background: linear-gradient(120deg, #f0f5ff 0%, #e6f7ff 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 0;
+}
+.stats-pc-card {
+  width: 1400px;
+  max-width: 95vw;
+  border-radius: 24px;
+  box-shadow: 0 8px 32px #1890ff22;
+  padding: 48px 40px 40px 40px;
+}
+.stats-pc-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  
+  // 确保标题没有多余的margin
+  h2.ant-typography {
+    margin: 0 !important;
+    line-height: 1.3 !important;
+  }
+}
+.stats-pc-back-btn {
+  color: #667eea !important;
+  font-size: 18px;
+  font-weight: 600;
+  padding: 8px 20px !important;
+  height: 44px !important;
+  border-radius: 22px !important;
+  border: none !important;
+  background: transparent !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative;
+  overflow: hidden;
+  
+  // 强制按钮垂直居中
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  vertical-align: middle !important;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 20px;
+  }
+  
+  &:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3) !important;
+    
+    &::before {
+      opacity: 1;
+    }
+    
+    .anticon, span {
+      color: white !important;
+      position: relative;
+      z-index: 1;
+    }
+  }
+  
+  &:active {
+    transform: translateY(0px) !important;
+  }
+  
+  .anticon, span {
+    transition: color 0.3s ease;
+    position: relative;
+    z-index: 1;
+  }
+}
+
+// 左右布局容器
+.stats-pc-content-layout {
+  display: flex;
+  gap: 24px;
+  margin-top: 24px;
+  align-items: stretch; // 拉伸到相同高度
+  
+  @media (max-width: 1200px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+// 左侧：散点图容器
+.stats-pc-chart-container {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.stats-pc-chart {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 450px;
+  height: 100%;
+}
+
+// 右侧：统计表格容器
+.stats-pc-table-container {
+  flex: 0 0 320px;
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  
+  @media (max-width: 1200px) {
+    flex: 1;
+    width: 100%;
+  }
+}
+
+// 表格包装器，添加背景和样式，使其看起来像一个卡片
+.stats-pc-table-wrapper {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 450px;
+  height: 100%;
+  
+  // 让表格在容器中垂直居中
+  .ant-table-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    justify-content: flex-start;
+  }
+  
+  .ant-table {
+    width: 100% !important;
+    margin: 0;
+    
+    .ant-table-thead > tr > th {
+      background: linear-gradient(135deg, #f8f9ff 0%, #f0f5ff 100%) !important;
+      border-bottom: 2px solid #e6f0ff !important;
+      font-weight: 600 !important;
+      color: #667eea !important;
+      font-size: 16px !important;
+      padding: 16px 24px !important;
+    }
+    
+    .ant-table-tbody > tr > td {
+      padding: 16px 24px !important;
+      font-size: 16px !important;
+      font-weight: 500;
+      border-bottom: 1px solid #f0f5ff !important;
+    }
+    
+    .ant-table-tbody > tr:hover > td {
+      background: linear-gradient(135deg, #fafbff 0%, #f5f8ff 100%) !important;
+    }
+    
+    .ant-table-tbody > tr:last-child > td {
+      border-bottom: none !important;
+    }
+  }
+  
+  // 确保表格容器样式统一
+  .ant-spin-nested-loading,
+  .ant-spin-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+// 刷新按钮样式
+.stats-pc-refresh-btn {
+  border-radius: 20px !important;
+  padding: 8px 24px !important;
+  height: auto !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  
+  // 默认样式：浅蓝色背景，蓝色文字，无边框
+  background: linear-gradient(135deg, #e6f7ff 0%, #f0f5ff 100%) !important;
+  border: none !important;
+  color: #1890ff !important;
+  box-shadow: none !important;
+  
+  .anticon {
+    transition: transform 0.3s ease;
+  }
+  
+  &:hover {
+    background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%) !important;
+    border: none !important;
+    color: #fff !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3) !important;
+    
+    .anticon {
+      transform: rotate(180deg);
+    }
+  }
+  
+  &:active {
+    transform: translateY(0px) !important;
+    box-shadow: 0 2px 8px rgba(24, 144, 255, 0.2) !important;
+  }
+  
+  &:focus {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+}
+
+// 重试按钮样式（错误状态）
+.stats-pc-retry-btn {
+  background: linear-gradient(135deg, #fff2f0 0%, #fff1f0 100%) !important;
+  border: none !important;
+  color: #ff4d4f !important;
+  
+  &:hover {
+    background: linear-gradient(135deg, #ff4d4f 0%, #cf1322 100%) !important;
+    border: none !important;
+    color: #fff !important;
+    box-shadow: 0 4px 12px rgba(255, 77, 79, 0.3) !important;
+  }
+  
+  &:focus {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+}
+
+// 美化表格样式（仅在表格包装器外的表格使用）
+.stats-pc-card > .ant-table {
+  border-radius: 16px !important;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.1) !important;
+  
+  .ant-table-thead > tr > th {
+    background: linear-gradient(135deg, #f8f9ff 0%, #f0f5ff 100%) !important;
+    border-bottom: 2px solid #e6f0ff !important;
+    font-weight: 600 !important;
+    color: #667eea !important;
+    font-size: 16px !important;
+    padding: 16px 24px !important;
+  }
+  
+  .ant-table-tbody > tr > td {
+    padding: 16px 24px !important;
+    font-size: 16px !important;
+    font-weight: 500;
+    border-bottom: 1px solid #f0f5ff !important;
+  }
+  
+  .ant-table-tbody > tr:hover > td {
+    background: linear-gradient(135deg, #fafbff 0%, #f5f8ff 100%) !important;
+  }
+  
+  .ant-table-tbody > tr:last-child > td {
+    border-bottom: none !important;
+  }
+}

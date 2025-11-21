@@ -1,0 +1,57 @@
+.ellipsis-tooltip-content {
+  // 默认样式
+  word-break: break-word;
+  word-wrap: break-word;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  line-height: inherit;
+  user-select: text;
+  cursor: default;
+
+  // 单行省略
+  &[data-lines="1"] {
+    display: block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  // 多行省略（2行及以上）
+  &[data-lines]:not([data-lines="1"]) {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+  }
+
+  &[data-lines="2"] {
+    -webkit-line-clamp: 2;
+  }
+
+  &[data-lines="3"] {
+    -webkit-line-clamp: 3;
+  }
+
+  &[data-lines="4"] {
+    -webkit-line-clamp: 4;
+  }
+
+  &[data-lines="5"] {
+    -webkit-line-clamp: 5;
+  }
+
+  // 大于 5 行的情况，使用 CSS 变量
+  &[data-lines] {
+    &[data-lines^="6"],
+    &[data-lines^="7"],
+    &[data-lines^="8"],
+    &[data-lines^="9"] {
+      -webkit-line-clamp: var(--ellipsis-lines);
+    }
+  }
+}
+
+// 当 Tooltip 包裹时，添加提示样式
+.ant-tooltip-open .ellipsis-tooltip-content {
+  cursor: pointer;
+}
+

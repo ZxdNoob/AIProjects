@@ -1,0 +1,601 @@
+# 一起掷骰子 - Cursor 规则配置
+
+## 项目概述
+这是一个现代化的在线掷骰子应用，具有精美的 3D 动画效果、智能加权随机算法、统计分析和版本历史管理功能。
+
+## 技术栈
+
+### 前端
+- **框架**: React 18 + TypeScript
+- **构建工具**: Vite 7
+- **UI 组件库**: Ant Design 5
+- **路由**: React Router 7
+- **样式**: Less (CSS 预处理器)
+- **图表**: ECharts + echarts-for-react
+- **代码规范**: ESLint + TypeScript ESLint
+
+### 后端
+- **运行时**: Node.js
+- **框架**: Express 5
+- **数据库**: SQLite3
+- **跨域**: CORS
+
+## 代码风格和规范
+
+### TypeScript
+- 使用严格的 TypeScript 类型检查
+- 优先使用函数式组件和 Hooks
+- 使用 `interface` 定义类型，避免使用 `type`（除非需要联合类型）
+- 组件 Props 必须定义明确的类型
+- 避免使用 `any`，优先使用 `unknown` 或具体类型
+- 使用可选链 `?.` 和空值合并 `??` 处理可能为空的值
+
+### React 组件
+- 使用函数式组件，优先使用函数声明而非箭头函数
+- 组件文件命名：PascalCase（如 `DicePage.tsx`）
+- 组件内部函数使用 `const` + 箭头函数
+- 使用 `React.StrictMode` 包裹应用
+- 合理使用 `useMemo` 和 `useCallback` 优化性能
+- 状态管理优先使用 `useState`，复杂状态考虑 `useReducer`
+
+### 样式规范
+- 使用 Less 预处理器
+- 样式文件与组件文件同名（如 `DicePage.tsx` 对应 `DicePage.less`）
+- 使用 BEM 命名规范或语义化类名
+- 优先使用 CSS 变量和 Less 变量管理主题色
+- 主色调：紫蓝渐变 `linear-gradient(135deg, #667eea 0%, #764ba2 100%)`
+- 响应式设计：移动端断点 `@media (max-width: 768px)`
+- 统一使用 `box-sizing: border-box`
+- 动画使用 `transition` 和 `transform`，避免使用 `left/top` 动画
+
+### 文件结构
+```
+frontend/src/
+├── components/          # 公共组件
+│   ├── ComponentName.tsx
+│   └── ComponentName.less
+├── pages/              # 页面组件
+│   └── PageName/
+│       ├── components/  # 页面专用组件
+│       ├── PageName.tsx
+│       └── PageName.less
+├── App.tsx             # 根组件
+└── main.tsx            # 入口文件
+```
+
+### 命名规范
+- **文件/组件**: PascalCase（`DicePage.tsx`, `DiceLogo.tsx`）
+- **函数/变量**: camelCase（`getStats`, `handleClick`）
+- **常量**: UPPER_SNAKE_CASE（`API_BASE_URL`）
+- **CSS 类名**: kebab-case（`version-history-header`）
+- **接口/类型**: PascalCase（`ApiResponse`, `DiceStats`）
+
+## 开发指导原则
+
+### API 调用
+- 后端 API 基础路径：`http://localhost:3001`
+- 使用 `fetch` 或 `axios` 进行 API 调用
+- 统一错误处理，使用 try-catch 包裹异步操作
+- API 响应格式：`{ data: T }` 或 `{ error: string }`
+- 所有 API 调用应该处理加载状态和错误状态
+
+### 数据库操作
+- 数据库文件：`backend/dice_stats.db`
+- 使用 SQLite3 进行数据持久化
+- 数据库操作函数在 `backend/db.js` 中定义
+- 所有数据库操作必须包含错误处理回调
+- 使用参数化查询防止 SQL 注入
+
+### 加权随机算法
+- 使用累积分布函数（CDF）方法实现加权随机
+- 概率分布：
+  - 1、2、5、6 点：各 10%
+  - 3、4 点：各 30%
+- 算法实现在 `backend/index.js` 的 `weightedRandomDice()` 函数中
+
+### 版本管理
+- 遵循语义化版本号（SemVer）规范
+- 使用 `backend/add-version.js` 脚本添加版本历史
+- 版本历史存储在 `version_history` 表中
+- 变更类型：`major`（重大更新）、`minor`（功能更新）、`patch`（修复更新）
+
+### ⚠️ 版本号更新规则（重要）
+
+当项目版本号发生变化时，**必须**同步更新以下内容：
+
+1. **更新 package.json 版本号**
+   - 根目录 `package.json` 中的 `version` 字段
+   - `frontend/package.json` 中的 `version` 字段
+   - 确保两个文件的版本号保持一致
+
+2. **更新 package-lock.json 版本号**
+   - 根目录 `package-lock.json` 中的 `version` 字段（第3行和第9行的 `packages[""].version`）
+   - `frontend/package-lock.json` 中的 `version` 字段（第3行和第9行的 `packages[""].version`）
+   - **必须**与对应的 `package.json` 中的版本号保持完全一致
+   - 注意：`package-lock.json` 中可能有多处版本号字段，都需要同步更新
+
+3. **更新数据库版本历史**
+   - 使用 `backend/add-version.js` 脚本添加版本历史记录
+   - 命令格式：`node backend/add-version.js <version> <changeType> <description>`
+   - 确保版本号、变更类型和更新说明准确无误
+   - **版本更新内容描述规范**（重要）：
+     - 严格按照行业规范和最佳实践编写版本更新说明
+     - 使用专业、简洁、准确的语言描述更新内容
+     - **必须包含完整的标点符号**，不能遗漏任何必要的标点
+     - 标点符号必须符合中文语法规范：
+       - 句子结尾使用句号（。）、问号（？）或感叹号（！）
+       - 列表项之间使用顿号（、）或逗号（，）
+       - 并列内容使用分号（；）分隔
+       - 引用或强调使用引号（""）或书名号（《》）
+     - 描述应清晰明了，避免歧义
+     - 建议使用简洁的短语或短句，避免冗长的描述
+
+4. **更新 CHANGELOG.md 更新日志**
+   - 在 `CHANGELOG.md` 文件中添加新版本记录
+   - 格式要求：
+     - 版本号作为标题：`### v<version> (<日期>)`
+     - 使用 emoji 图标标识版本类型（🚀 major、✨ minor、🐛 patch）
+     - 详细列出本次更新的所有改动点
+     - 按照功能模块分类组织内容
+   - 新版本记录应添加在更新日志的最顶部（最新版本在前）
+   - 日期格式：`YYYY-MM-DD`
+   - **版本更新内容描述规范**（重要）：
+     - 严格按照行业规范和最佳实践编写版本更新说明
+     - 使用专业、简洁、准确的语言描述更新内容
+     - **必须包含完整的标点符号**，不能遗漏任何必要的标点
+     - 标点符号必须符合中文语法规范：
+       - 句子结尾使用句号（。）、问号（？）或感叹号（！）
+       - 列表项之间使用顿号（、）或逗号（，）
+       - 并列内容使用分号（；）分隔
+       - 引用或强调使用引号（""）或书名号（《》）
+     - 每个功能模块的描述应完整，以句号结尾
+     - 列表项应使用统一的格式（如使用 `-` 或 `*` 开头）
+     - 描述应清晰明了，避免歧义
+
+5. **版本更新检查清单**
+   - [ ] 根目录 `package.json` 版本号已更新
+   - [ ] `frontend/package.json` 版本号已更新
+   - [ ] 根目录 `package-lock.json` 版本号已更新（第3行和第9行）
+   - [ ] `frontend/package-lock.json` 版本号已更新（第3行和第9行）
+   - [ ] 数据库版本历史已添加（使用 add-version.js 脚本）
+   - [ ] CHANGELOG.md 更新日志已添加新版本记录
+   - [ ] 版本号格式符合 SemVer 规范
+   - [ ] 变更类型（major/minor/patch）选择正确
+   - [ ] 更新说明清晰完整
+   - [ ] **版本更新内容描述符合规范**：
+     - [ ] 使用专业、简洁、准确的语言
+     - [ ] 包含完整的标点符号，无遗漏
+     - [ ] 标点符号符合中文语法规范
+     - [ ] 描述清晰明了，无歧义
+
+**注意**：AI 助手在更新版本号时，必须同时完成上述所有步骤，确保版本信息的一致性。
+
+### UI/UX 原则
+- 所有按钮移除默认焦点边框（`outline: none`）
+- 使用渐变背景和圆角设计
+- 统一使用紫蓝渐变主题色
+- 按钮交互：悬浮上浮效果（`translateY(-1px)`）
+- 使用平滑过渡动画（`transition: all 0.3s ease`）
+- 响应式设计：移动端优先，桌面端增强
+
+### 性能优化
+- 使用 React.memo 优化组件渲染
+- 合理使用 useMemo 缓存计算结果
+- 使用 useCallback 缓存事件处理函数
+- 图片和资源使用懒加载
+- 避免在渲染函数中创建新对象/数组
+
+### 错误处理
+- 所有异步操作必须包含错误处理
+- 使用 try-catch 包裹可能抛出错误的代码
+- 向用户显示友好的错误提示
+- 在控制台记录详细的错误信息用于调试
+
+## 代码建议
+
+以下是一些代码优化和最佳实践建议，旨在提升代码质量和用户体验：
+
+### 表单弹框处理
+- **表单重置时机**：对于带有表单的弹框（Modal），应该在弹框完全关闭后重置表单项的值
+  - 使用 Modal 的 `afterClose` 回调来重置表单，而不是在 `onCancel` 或 `onOk` 中立即重置
+  - 这样可以确保关闭动画完整播放，避免表单内容在动画过程中被清空，提升用户体验
+  - 示例代码：
+    ```tsx
+    // ✅ 推荐：在 afterClose 中重置表单
+    <Modal
+      open={isModalVisible}
+      onCancel={handleCancel}
+      afterClose={() => form.resetFields()}
+    >
+      <Form form={form}>...</Form>
+    </Modal>
+
+    // ❌ 不推荐：在 onCancel 中立即重置表单
+    <Modal
+      open={isModalVisible}
+      onCancel={() => {
+        setIsModalVisible(false);
+        form.resetFields(); // 会在动画过程中清空表单
+      }}
+    >
+      <Form form={form}>...</Form>
+    </Modal>
+    ```
+
+### 其他代码优化建议
+- 其他代码优化规则可以添加到此章节
+
+## 特定规则
+
+### Ant Design 使用
+- 使用中文语言包：`import zhCN from "antd/locale/zh_CN"`
+- 使用 `ConfigProvider` 包裹应用并设置 `locale={zhCN}`
+- 优先使用 Ant Design 组件，避免重复造轮子
+- 自定义样式使用 Less 覆盖，避免内联样式
+- **日期选择器中文配置**：由于 Ant Design 5 的 DatePicker 使用 dayjs 作为底层日期库，需要在应用入口文件中导入并配置 dayjs 的中文语言包
+  - 在 `main.tsx` 或 `App.tsx` 中导入：`import 'dayjs/locale/zh-cn'`
+  - 设置 dayjs 默认语言：`dayjs.locale('zh-cn')`
+  - 确保所有 DatePicker 组件默认使用中文显示
+
+### 路由配置
+- 使用 React Router 7 进行路由管理
+- 路由路径使用 kebab-case（`/version-history`）
+- 首页路径：`/`
+- 主要页面：`/dice`（掷骰子）、`/stats`（统计）、`/version-history`（版本历史）
+
+### 3D 动画
+- 骰子 3D 效果使用 CSS 3D Transform
+- 动画时长：0.6s - 1s
+- 使用 `transform-style: preserve-3d` 保持 3D 效果
+- 骰子点数显示延迟：等待动画完成后再显示结果
+
+### 统计图表
+- 使用 ECharts 进行数据可视化
+- 散点图：X轴为时间，Y轴为点数
+- 图表配置应该响应式，适配不同屏幕尺寸
+- 图表颜色使用项目主题色
+
+## 代码提交规范
+
+本项目遵循 **Conventional Commits（约定式提交）** 规范，这是业界最流行的 Git 提交消息规范。
+
+### Commit 消息格式
+
+**推荐格式（带 emoji）：**
+```
+<emoji> <type>(<scope>): <subject>
+
+[optional body]
+
+[optional footer]
+```
+
+**标准格式（不带 emoji）：**
+```
+<type>(<scope>): <subject>
+
+[optional body]
+
+[optional footer]
+```
+
+> 💡 **建议**：尽可能使用 emoji 图标，让提交信息更加直观和易读。
+
+### 格式说明
+
+#### 1. Emoji（图标，推荐）
+在 type 之前添加 emoji 图标，让提交信息更直观。常用 emoji 映射：
+
+- **✨ `feat`**: 新功能（feature）
+- **🐛 `fix`**: 修复 bug
+- **📝 `docs`**: 文档更新（documentation）
+- **💄 `style`**: 代码格式调整（不影响代码运行，如空格、分号、格式化等）
+- **♻️ `refactor`**: 代码重构（既不是新功能也不是修复 bug）
+- **⚡ `perf`**: 性能优化（performance）
+- **✅ `test`**: 添加或修改测试
+- **🔨 `build`**: 构建系统或外部依赖的更改（如 webpack、npm）
+- **👷 `ci`**: CI 配置文件和脚本的更改（如 GitHub Actions、Travis）
+- **🔧 `chore`**: 其他更改（如构建过程、辅助工具的变动）
+- **⏪ `revert`**: 回滚之前的提交
+
+**其他常用 emoji：**
+- **🎨**: UI/样式改进
+- **🚀**: 部署相关
+- **🔒**: 安全相关
+- **📦**: 依赖更新
+- **🎉**: 初始提交
+- **🔥**: 删除代码或文件
+- **💚**: 修复 CI 构建
+- **⬆️**: 升级依赖
+- **⬇️**: 降级依赖
+- **🔀**: 合并分支
+- **📱**: 响应式设计相关
+- **🎯**: 优化或改进
+
+#### 2. Type（类型，必需）
+提交类型必须是以下之一：
+
+- **`feat`**: 新功能（feature）
+- **`fix`**: 修复 bug
+- **`docs`**: 文档更新（documentation）
+- **`style`**: 代码格式调整（不影响代码运行，如空格、分号、格式化等）
+- **`refactor`**: 代码重构（既不是新功能也不是修复 bug）
+- **`perf`**: 性能优化（performance）
+- **`test`**: 添加或修改测试
+- **`build`**: 构建系统或外部依赖的更改（如 webpack、npm）
+- **`ci`**: CI 配置文件和脚本的更改（如 GitHub Actions、Travis）
+- **`chore`**: 其他更改（如构建过程、辅助工具的变动）
+- **`revert`**: 回滚之前的提交
+
+#### 3. Scope（范围，可选）
+表示提交影响的范围，通常是模块或文件名。本项目常用 scope：
+
+- `dice`: 掷骰子相关功能
+- `stats`: 统计页面相关
+- `version-history`: 版本历史相关
+- `ui`: UI 组件和样式
+- `api`: API 接口相关
+- `db`: 数据库相关
+- `router`: 路由相关
+- `config`: 配置文件
+- `deps`: 依赖更新
+
+**注意**：Scope 大小写不限制，可以为空。
+
+#### 4. Subject（主题，必需）
+- 使用中文或英文描述本次提交的简短说明
+- 大小写不限制（允许中文和英文，首字母大小写均可）
+- 结尾不加句号
+- 使用祈使语气（如"添加"而不是"添加了"）
+- 长度不限制
+
+#### 5. Body（正文，可选）
+- 详细描述本次提交的动机和与之前行为的对比
+- 可以多行，长度不限制
+- **建议**：Body 前使用空行与 subject 分隔（推荐但不强制）
+
+#### 6. Footer（页脚，可选）
+- 用于记录 Breaking Changes（破坏性变更）
+- 或引用相关的 Issue/PR
+- 格式：`BREAKING CHANGE: <description>` 或 `Closes #123`
+- **建议**：Footer 前使用空行与 body 分隔（推荐但不强制）
+
+### Breaking Changes（破坏性变更）
+
+如果提交包含不兼容的变更，需要在 subject 后添加 `!`，或在 footer 中说明：
+
+```
+feat(api)!: 重构 API 响应格式
+
+BREAKING CHANGE: API 响应格式从 {data: T} 改为 {result: T, code: number}
+```
+
+### 提交示例
+
+#### 基础示例（推荐使用 emoji）
+```bash
+# 新功能
+✨ feat(dice): 添加 3D 骰子旋转动画
+
+# 修复 bug
+🐛 fix(stats): 修复统计数据不更新的问题
+
+# 样式调整
+💄 style(ui): 优化按钮悬浮效果
+
+# 文档更新
+📝 docs: 更新 README 中的安装说明
+
+# 代码重构
+♻️ refactor(api): 重构 API 错误处理逻辑
+
+# 性能优化
+⚡ perf(dice): 优化骰子动画性能，减少重绘次数
+
+# 测试
+✅ test(stats): 添加统计页面的单元测试
+
+# 构建相关
+🔨 build: 更新 Vite 到 7.0.4
+
+# 其他
+🔧 chore: 更新依赖包版本
+
+# UI/样式改进
+🎨 style(ui): 优化版本历史页面布局
+
+# 依赖更新
+📦 chore(deps): 升级 React 到 18.3.1
+
+# 响应式设计
+📱 style(ui): 优化移动端适配
+```
+
+#### 基础示例（不带 emoji）
+```bash
+# 新功能
+feat(dice): 添加 3D 骰子旋转动画
+
+# 修复 bug
+fix(stats): 修复统计数据不更新的问题
+
+# 样式调整
+style(ui): 优化按钮悬浮效果
+
+# 文档更新
+docs: 更新 README 中的安装说明
+
+# 代码重构
+refactor(api): 重构 API 错误处理逻辑
+
+# 性能优化
+perf(dice): 优化骰子动画性能，减少重绘次数
+
+# 测试
+test(stats): 添加统计页面的单元测试
+
+# 构建相关
+build: 更新 Vite 到 7.0.4
+
+# 其他
+chore: 更新依赖包版本
+```
+
+#### 带 Body 的示例（推荐使用 emoji）
+```bash
+✨ feat(stats): 添加散点图统计功能
+
+在统计页面新增散点图可视化，展示每次掷骰子的时间分布。
+X轴显示时间（年月日时分秒），Y轴显示点数（1-6）。
+鼠标悬停可查看详细的时间信息。
+
+Closes #42
+```
+
+#### 带 Body 的示例（不带 emoji）
+```bash
+feat(stats): 添加散点图统计功能
+
+在统计页面新增散点图可视化，展示每次掷骰子的时间分布。
+X轴显示时间（年月日时分秒），Y轴显示点数（1-6）。
+鼠标悬停可查看详细的时间信息。
+
+Closes #42
+```
+
+#### Breaking Change 示例（推荐使用 emoji）
+```bash
+✨ feat(api)!: 重构 API 响应格式
+
+BREAKING CHANGE: API 响应格式从 {data: T} 改为 {result: T, code: number}。
+所有前端 API 调用需要相应更新。
+
+迁移指南：
+- 旧格式: response.data
+- 新格式: response.result
+```
+
+#### Breaking Change 示例（不带 emoji）
+```bash
+feat(api)!: 重构 API 响应格式
+
+BREAKING CHANGE: API 响应格式从 {data: T} 改为 {result: T, code: number}。
+所有前端 API 调用需要相应更新。
+
+迁移指南：
+- 旧格式: response.data
+- 新格式: response.result
+```
+
+#### 多行 Body 示例（推荐使用 emoji）
+```bash
+⚡ perf(db): 优化数据库查询性能
+
+- 为 stats 表添加索引，提升查询速度
+- 使用连接池管理数据库连接
+- 优化历史记录查询的 SQL 语句
+
+性能提升：
+- 统计查询速度提升 60%
+- 历史记录查询速度提升 40%
+```
+
+#### 多行 Body 示例（不带 emoji）
+```bash
+refactor(db): 优化数据库查询性能
+
+- 为 stats 表添加索引，提升查询速度
+- 使用连接池管理数据库连接
+- 优化历史记录查询的 SQL 语句
+
+性能提升：
+- 统计查询速度提升 60%
+- 历史记录查询速度提升 40%
+```
+
+### 提交规范检查清单
+
+提交前请确认：
+- [ ] **推荐**：已添加合适的 emoji 图标（放在 type 之前）
+- [ ] Type 类型正确且符合规范
+- [ ] Scope 范围明确（如适用）
+- [ ] Subject 简洁明了，使用祈使语气
+- [ ] 如果有破坏性变更，已添加 `!` 或 `BREAKING CHANGE`
+- [ ] 如果有相关 Issue，已在 footer 中引用
+- [ ] 代码已通过 ESLint 检查
+- [ ] 代码已测试通过
+
+### 常用提交命令
+
+```bash
+# 单个文件提交
+git commit -m "feat(dice): 添加新功能"
+
+# 多行提交（带 body）
+git commit -m "feat(stats): 添加散点图" -m "详细描述..."
+
+# 交互式提交（推荐，可以编辑完整格式）
+git commit
+```
+
+### 参考资源
+
+- [Conventional Commits 官方规范](https://www.conventionalcommits.org/)
+- [Angular 提交规范](https://github.com/angular/angular/blob/main/CONTRIBUTING.md#commit)
+
+## 注意事项
+
+### ⚠️ 代码提交规则（重要）
+
+1. **严禁自动提交代码**：AI 助手不得在完成代码修改后自动执行 `git commit` 命令
+2. **必须等待用户明确指令**：只有当用户明确输入"提交代码"或类似的提交指令时，才能执行代码提交操作
+3. **提交前确认**：在执行提交前，应该先显示将要提交的文件列表和提交信息，等待用户确认
+4. **遵循提交规范**：所有提交必须遵循项目的 Conventional Commits 规范（见上方"代码提交规范"章节）
+
+### 其他注意事项
+
+1. **不要**在代码中硬编码 API 地址，使用环境变量或配置文件
+2. **不要**在组件中直接操作 DOM，使用 React 的声明式方式
+3. **不要**忽略 TypeScript 类型错误，确保类型安全
+4. **不要**在渲染函数中执行副作用，使用 useEffect
+5. **确保**所有新功能都有对应的错误处理
+6. **确保**代码通过 ESLint 检查
+7. **确保**响应式设计在移动端正常工作
+8. **确保**数据库操作包含错误处理回调
+
+## 开发工作流
+
+1. 创建功能分支
+2. 编写代码并遵循上述规范
+3. 运行 `npm run lint` 检查代码规范
+4. 测试功能是否正常工作
+5. **等待用户明确输入"提交代码"指令后，再执行代码提交操作**（⚠️ 重要：AI 助手不得自动提交代码）
+6. 提交代码并遵循提交规范（Conventional Commits）
+7. **更新版本号（如需要）**：
+   - 更新 `package.json` 和 `frontend/package.json` 中的版本号
+   - 使用 `backend/add-version.js` 脚本添加数据库版本历史
+   - 在 `CHANGELOG.md` 文件中添加新版本记录
+   - 确保所有版本信息同步更新（详见上方"版本号更新规则"章节）
+
+## 常用命令
+
+```bash
+# 前端开发
+cd frontend
+npm run dev          # 启动开发服务器
+npm run build        # 构建生产版本
+npm run lint         # 代码检查
+
+# 后端开发
+cd backend
+node index.js        # 启动服务器
+
+# 版本管理
+cd backend
+node add-version.js <version> <changeType> <description>
+```
+
+---
+
+**遵循这些规则可以确保代码质量和项目一致性。如有疑问，请参考项目 README.md 或现有代码示例。**
+
