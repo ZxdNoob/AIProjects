@@ -32,16 +32,16 @@ module.exports = {
     'subject-empty': [2, 'never'],
     // 主题大小写：不限制（允许中文和英文）
     'subject-case': [0],
-    // 主题最大长度
-    'subject-max-length': [2, 'always', 72],
+    // 主题长度：不限制
+    'subject-max-length': [0],
     // 主题结尾不能有句号
     'subject-full-stop': [2, 'never', '.'],
     // 范围大小写：不限制
     'scope-case': [0],
     // 范围可以为空
     'scope-empty': [0],
-    // 允许 emoji（在主题前）
-    'header-max-length': [2, 'always', 100],
+    // Header 长度：不限制
+    'header-max-length': [0],
     // Body 和 Footer 不强制
     'body-leading-blank': [1, 'always'],
     'footer-leading-blank': [1, 'always'],
