@@ -113,8 +113,8 @@ frontend/src/
    - 命令格式：`node backend/add-version.js <version> <changeType> <description>`
    - 确保版本号、变更类型和更新说明准确无误
 
-3. **更新 README.md 更新日志**
-   - 在 `README.md` 文件的"📝 更新日志"部分（第 251 行开始）添加新版本记录
+3. **更新 CHANGELOG.md 更新日志**
+   - 在 `CHANGELOG.md` 文件中添加新版本记录
    - 格式要求：
      - 版本号作为标题：`### v<version> (<日期>)`
      - 使用 emoji 图标标识版本类型（🚀 major、✨ minor、🐛 patch）
@@ -127,7 +127,7 @@ frontend/src/
    - [ ] 根目录 `package.json` 版本号已更新
    - [ ] `frontend/package.json` 版本号已更新
    - [ ] 数据库版本历史已添加（使用 add-version.js 脚本）
-   - [ ] README.md 更新日志已添加新版本记录
+   - [ ] CHANGELOG.md 更新日志已添加新版本记录
    - [ ] 版本号格式符合 SemVer 规范
    - [ ] 变更类型（major/minor/patch）选择正确
    - [ ] 更新说明清晰完整
@@ -500,7 +500,7 @@ git commit
 7. **更新版本号（如需要）**：
    - 更新 `package.json` 和 `frontend/package.json` 中的版本号
    - 使用 `backend/add-version.js` 脚本添加数据库版本历史
-   - 在 `README.md` 的"📝 更新日志"部分添加新版本记录
+   - 在 `CHANGELOG.md` 文件中添加新版本记录
    - 确保所有版本信息同步更新（详见上方"版本号更新规则"章节）
 
 ## 常用命令
