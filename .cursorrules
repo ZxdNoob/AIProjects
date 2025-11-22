@@ -108,12 +108,18 @@ frontend/src/
    - `frontend/package.json` 中的 `version` 字段
    - 确保两个文件的版本号保持一致
 
-2. **更新数据库版本历史**
+2. **更新 package-lock.json 版本号**
+   - 根目录 `package-lock.json` 中的 `version` 字段（第3行和第9行的 `packages[""].version`）
+   - `frontend/package-lock.json` 中的 `version` 字段（第3行和第9行的 `packages[""].version`）
+   - **必须**与对应的 `package.json` 中的版本号保持完全一致
+   - 注意：`package-lock.json` 中可能有多处版本号字段，都需要同步更新
+
+3. **更新数据库版本历史**
    - 使用 `backend/add-version.js` 脚本添加版本历史记录
    - 命令格式：`node backend/add-version.js <version> <changeType> <description>`
    - 确保版本号、变更类型和更新说明准确无误
 
-3. **更新 CHANGELOG.md 更新日志**
+4. **更新 CHANGELOG.md 更新日志**
    - 在 `CHANGELOG.md` 文件中添加新版本记录
    - 格式要求：
      - 版本号作为标题：`### v<version> (<日期>)`
@@ -123,9 +129,11 @@ frontend/src/
    - 新版本记录应添加在更新日志的最顶部（最新版本在前）
    - 日期格式：`YYYY-MM-DD`
 
-4. **版本更新检查清单**
+5. **版本更新检查清单**
    - [ ] 根目录 `package.json` 版本号已更新
    - [ ] `frontend/package.json` 版本号已更新
+   - [ ] 根目录 `package-lock.json` 版本号已更新（第3行和第9行）
+   - [ ] `frontend/package-lock.json` 版本号已更新（第3行和第9行）
    - [ ] 数据库版本历史已添加（使用 add-version.js 脚本）
    - [ ] CHANGELOG.md 更新日志已添加新版本记录
    - [ ] 版本号格式符合 SemVer 规范
