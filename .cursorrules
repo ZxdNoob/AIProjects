@@ -99,6 +99,41 @@ frontend/src/
 - 版本历史存储在 `version_history` 表中
 - 变更类型：`major`（重大更新）、`minor`（功能更新）、`patch`（修复更新）
 
+### ⚠️ 版本号更新规则（重要）
+
+当项目版本号发生变化时，**必须**同步更新以下内容：
+
+1. **更新 package.json 版本号**
+   - 根目录 `package.json` 中的 `version` 字段
+   - `frontend/package.json` 中的 `version` 字段
+   - 确保两个文件的版本号保持一致
+
+2. **更新数据库版本历史**
+   - 使用 `backend/add-version.js` 脚本添加版本历史记录
+   - 命令格式：`node backend/add-version.js <version> <changeType> <description>`
+   - 确保版本号、变更类型和更新说明准确无误
+
+3. **更新 README.md 更新日志**
+   - 在 `README.md` 文件的"📝 更新日志"部分（第 251 行开始）添加新版本记录
+   - 格式要求：
+     - 版本号作为标题：`### v<version> (<日期>)`
+     - 使用 emoji 图标标识版本类型（🚀 major、✨ minor、🐛 patch）
+     - 详细列出本次更新的所有改动点
+     - 按照功能模块分类组织内容
+   - 新版本记录应添加在更新日志的最顶部（最新版本在前）
+   - 日期格式：`YYYY-MM-DD`
+
+4. **版本更新检查清单**
+   - [ ] 根目录 `package.json` 版本号已更新
+   - [ ] `frontend/package.json` 版本号已更新
+   - [ ] 数据库版本历史已添加（使用 add-version.js 脚本）
+   - [ ] README.md 更新日志已添加新版本记录
+   - [ ] 版本号格式符合 SemVer 规范
+   - [ ] 变更类型（major/minor/patch）选择正确
+   - [ ] 更新说明清晰完整
+
+**注意**：AI 助手在更新版本号时，必须同时完成上述所有步骤，确保版本信息的一致性。
+
 ### UI/UX 原则
 - 所有按钮移除默认焦点边框（`outline: none`）
 - 使用渐变背景和圆角设计
@@ -462,7 +497,11 @@ git commit
 4. 测试功能是否正常工作
 5. **等待用户明确输入"提交代码"指令后，再执行代码提交操作**（⚠️ 重要：AI 助手不得自动提交代码）
 6. 提交代码并遵循提交规范（Conventional Commits）
-7. 更新版本号（如需要）并添加版本历史记录
+7. **更新版本号（如需要）**：
+   - 更新 `package.json` 和 `frontend/package.json` 中的版本号
+   - 使用 `backend/add-version.js` 脚本添加数据库版本历史
+   - 在 `README.md` 的"📝 更新日志"部分添加新版本记录
+   - 确保所有版本信息同步更新（详见上方"版本号更新规则"章节）
 
 ## 常用命令
 
