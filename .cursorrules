@@ -99,49 +99,6 @@ frontend/src/
 - 版本历史存储在 `version_history` 表中
 - 变更类型：`major`（重大更新）、`minor`（功能更新）、`patch`（修复更新）
 
-### ⚠️ 版本号更新规则（重要）
-
-当项目版本号发生变化时，**必须**同步更新以下内容：
-
-1. **更新 package.json 版本号**
-   - 根目录 `package.json` 中的 `version` 字段
-   - `frontend/package.json` 中的 `version` 字段
-   - 确保两个文件的版本号保持一致
-
-2. **更新 package-lock.json 版本号**
-   - 根目录 `package-lock.json` 中的 `version` 字段（第3行和第9行的 `packages[""].version`）
-   - `frontend/package-lock.json` 中的 `version` 字段（第3行和第9行的 `packages[""].version`）
-   - **必须**与对应的 `package.json` 中的版本号保持完全一致
-   - 注意：`package-lock.json` 中可能有多处版本号字段，都需要同步更新
-
-3. **更新数据库版本历史**
-   - 使用 `backend/add-version.js` 脚本添加版本历史记录
-   - 命令格式：`node backend/add-version.js <version> <changeType> <description>`
-   - 确保版本号、变更类型和更新说明准确无误
-
-4. **更新 CHANGELOG.md 更新日志**
-   - 在 `CHANGELOG.md` 文件中添加新版本记录
-   - 格式要求：
-     - 版本号作为标题：`### v<version> (<日期>)`
-     - 使用 emoji 图标标识版本类型（🚀 major、✨ minor、🐛 patch）
-     - 详细列出本次更新的所有改动点
-     - 按照功能模块分类组织内容
-   - 新版本记录应添加在更新日志的最顶部（最新版本在前）
-   - 日期格式：`YYYY-MM-DD`
-
-5. **版本更新检查清单**
-   - [ ] 根目录 `package.json` 版本号已更新
-   - [ ] `frontend/package.json` 版本号已更新
-   - [ ] 根目录 `package-lock.json` 版本号已更新（第3行和第9行）
-   - [ ] `frontend/package-lock.json` 版本号已更新（第3行和第9行）
-   - [ ] 数据库版本历史已添加（使用 add-version.js 脚本）
-   - [ ] CHANGELOG.md 更新日志已添加新版本记录
-   - [ ] 版本号格式符合 SemVer 规范
-   - [ ] 变更类型（major/minor/patch）选择正确
-   - [ ] 更新说明清晰完整
-
-**注意**：AI 助手在更新版本号时，必须同时完成上述所有步骤，确保版本信息的一致性。
-
 ### UI/UX 原则
 - 所有按钮移除默认焦点边框（`outline: none`）
 - 使用渐变背景和圆角设计
@@ -195,16 +152,6 @@ frontend/src/
 
 ### Commit 消息格式
 
-**推荐格式（带 emoji）：**
-```
-<emoji> <type>(<scope>): <subject>
-
-[optional body]
-
-[optional footer]
-```
-
-**标准格式（不带 emoji）：**
 ```
 <type>(<scope>): <subject>
 
@@ -213,40 +160,9 @@ frontend/src/
 [optional footer]
 ```
 
-> 💡 **建议**：尽可能使用 emoji 图标，让提交信息更加直观和易读。
-
 ### 格式说明
 
-#### 1. Emoji（图标，推荐）
-在 type 之前添加 emoji 图标，让提交信息更直观。常用 emoji 映射：
-
-- **✨ `feat`**: 新功能（feature）
-- **🐛 `fix`**: 修复 bug
-- **📝 `docs`**: 文档更新（documentation）
-- **💄 `style`**: 代码格式调整（不影响代码运行，如空格、分号、格式化等）
-- **♻️ `refactor`**: 代码重构（既不是新功能也不是修复 bug）
-- **⚡ `perf`**: 性能优化（performance）
-- **✅ `test`**: 添加或修改测试
-- **🔨 `build`**: 构建系统或外部依赖的更改（如 webpack、npm）
-- **👷 `ci`**: CI 配置文件和脚本的更改（如 GitHub Actions、Travis）
-- **🔧 `chore`**: 其他更改（如构建过程、辅助工具的变动）
-- **⏪ `revert`**: 回滚之前的提交
-
-**其他常用 emoji：**
-- **🎨**: UI/样式改进
-- **🚀**: 部署相关
-- **🔒**: 安全相关
-- **📦**: 依赖更新
-- **🎉**: 初始提交
-- **🔥**: 删除代码或文件
-- **💚**: 修复 CI 构建
-- **⬆️**: 升级依赖
-- **⬇️**: 降级依赖
-- **🔀**: 合并分支
-- **📱**: 响应式设计相关
-- **🎯**: 优化或改进
-
-#### 2. Type（类型，必需）
+#### 1. Type（类型，必需）
 提交类型必须是以下之一：
 
 - **`feat`**: 新功能（feature）
@@ -261,7 +177,7 @@ frontend/src/
 - **`chore`**: 其他更改（如构建过程、辅助工具的变动）
 - **`revert`**: 回滚之前的提交
 
-#### 3. Scope（范围，可选）
+#### 2. Scope（范围，可选）
 表示提交影响的范围，通常是模块或文件名。本项目常用 scope：
 
 - `dice`: 掷骰子相关功能
@@ -274,25 +190,22 @@ frontend/src/
 - `config`: 配置文件
 - `deps`: 依赖更新
 
-**注意**：Scope 大小写不限制，可以为空。
-
-#### 4. Subject（主题，必需）
+#### 3. Subject（主题，必需）
 - 使用中文或英文描述本次提交的简短说明
-- 大小写不限制（允许中文和英文，首字母大小写均可）
+- 首字母小写（除非是专有名词）
 - 结尾不加句号
 - 使用祈使语气（如"添加"而不是"添加了"）
-- 长度不限制
+- 长度不超过 72 个字符
 
-#### 5. Body（正文，可选）
+#### 4. Body（正文，可选）
 - 详细描述本次提交的动机和与之前行为的对比
-- 可以多行，长度不限制
-- **建议**：Body 前使用空行与 subject 分隔（推荐但不强制）
+- 可以多行，每行不超过 72 个字符
+- 使用空行与 subject 和 footer 分隔
 
-#### 6. Footer（页脚，可选）
+#### 5. Footer（页脚，可选）
 - 用于记录 Breaking Changes（破坏性变更）
 - 或引用相关的 Issue/PR
 - 格式：`BREAKING CHANGE: <description>` 或 `Closes #123`
-- **建议**：Footer 前使用空行与 body 分隔（推荐但不强制）
 
 ### Breaking Changes（破坏性变更）
 
@@ -306,46 +219,7 @@ BREAKING CHANGE: API 响应格式从 {data: T} 改为 {result: T, code: number}
 
 ### 提交示例
 
-#### 基础示例（推荐使用 emoji）
-```bash
-# 新功能
-✨ feat(dice): 添加 3D 骰子旋转动画
-
-# 修复 bug
-🐛 fix(stats): 修复统计数据不更新的问题
-
-# 样式调整
-💄 style(ui): 优化按钮悬浮效果
-
-# 文档更新
-📝 docs: 更新 README 中的安装说明
-
-# 代码重构
-♻️ refactor(api): 重构 API 错误处理逻辑
-
-# 性能优化
-⚡ perf(dice): 优化骰子动画性能，减少重绘次数
-
-# 测试
-✅ test(stats): 添加统计页面的单元测试
-
-# 构建相关
-🔨 build: 更新 Vite 到 7.0.4
-
-# 其他
-🔧 chore: 更新依赖包版本
-
-# UI/样式改进
-🎨 style(ui): 优化版本历史页面布局
-
-# 依赖更新
-📦 chore(deps): 升级 React 到 18.3.1
-
-# 响应式设计
-📱 style(ui): 优化移动端适配
-```
-
-#### 基础示例（不带 emoji）
+#### 基础示例
 ```bash
 # 新功能
 feat(dice): 添加 3D 骰子旋转动画
@@ -375,18 +249,7 @@ build: 更新 Vite 到 7.0.4
 chore: 更新依赖包版本
 ```
 
-#### 带 Body 的示例（推荐使用 emoji）
-```bash
-✨ feat(stats): 添加散点图统计功能
-
-在统计页面新增散点图可视化，展示每次掷骰子的时间分布。
-X轴显示时间（年月日时分秒），Y轴显示点数（1-6）。
-鼠标悬停可查看详细的时间信息。
-
-Closes #42
-```
-
-#### 带 Body 的示例（不带 emoji）
+#### 带 Body 的示例
 ```bash
 feat(stats): 添加散点图统计功能
 
@@ -397,19 +260,7 @@ X轴显示时间（年月日时分秒），Y轴显示点数（1-6）。
 Closes #42
 ```
 
-#### Breaking Change 示例（推荐使用 emoji）
-```bash
-✨ feat(api)!: 重构 API 响应格式
-
-BREAKING CHANGE: API 响应格式从 {data: T} 改为 {result: T, code: number}。
-所有前端 API 调用需要相应更新。
-
-迁移指南：
-- 旧格式: response.data
-- 新格式: response.result
-```
-
-#### Breaking Change 示例（不带 emoji）
+#### Breaking Change 示例
 ```bash
 feat(api)!: 重构 API 响应格式
 
@@ -421,20 +272,7 @@ BREAKING CHANGE: API 响应格式从 {data: T} 改为 {result: T, code: number}�
 - 新格式: response.result
 ```
 
-#### 多行 Body 示例（推荐使用 emoji）
-```bash
-⚡ perf(db): 优化数据库查询性能
-
-- 为 stats 表添加索引，提升查询速度
-- 使用连接池管理数据库连接
-- 优化历史记录查询的 SQL 语句
-
-性能提升：
-- 统计查询速度提升 60%
-- 历史记录查询速度提升 40%
-```
-
-#### 多行 Body 示例（不带 emoji）
+#### 多行 Body 示例
 ```bash
 refactor(db): 优化数据库查询性能
 
@@ -450,7 +288,6 @@ refactor(db): 优化数据库查询性能
 ### 提交规范检查清单
 
 提交前请确认：
-- [ ] **推荐**：已添加合适的 emoji 图标（放在 type 之前）
 - [ ] Type 类型正确且符合规范
 - [ ] Scope 范围明确（如适用）
 - [ ] Subject 简洁明了，使用祈使语气
@@ -479,15 +316,6 @@ git commit
 
 ## 注意事项
 
-### ⚠️ 代码提交规则（重要）
-
-1. **严禁自动提交代码**：AI 助手不得在完成代码修改后自动执行 `git commit` 命令
-2. **必须等待用户明确指令**：只有当用户明确输入"提交代码"或类似的提交指令时，才能执行代码提交操作
-3. **提交前确认**：在执行提交前，应该先显示将要提交的文件列表和提交信息，等待用户确认
-4. **遵循提交规范**：所有提交必须遵循项目的 Conventional Commits 规范（见上方"代码提交规范"章节）
-
-### 其他注意事项
-
 1. **不要**在代码中硬编码 API 地址，使用环境变量或配置文件
 2. **不要**在组件中直接操作 DOM，使用 React 的声明式方式
 3. **不要**忽略 TypeScript 类型错误，确保类型安全
@@ -503,13 +331,8 @@ git commit
 2. 编写代码并遵循上述规范
 3. 运行 `npm run lint` 检查代码规范
 4. 测试功能是否正常工作
-5. **等待用户明确输入"提交代码"指令后，再执行代码提交操作**（⚠️ 重要：AI 助手不得自动提交代码）
-6. 提交代码并遵循提交规范（Conventional Commits）
-7. **更新版本号（如需要）**：
-   - 更新 `package.json` 和 `frontend/package.json` 中的版本号
-   - 使用 `backend/add-version.js` 脚本添加数据库版本历史
-   - 在 `CHANGELOG.md` 文件中添加新版本记录
-   - 确保所有版本信息同步更新（详见上方"版本号更新规则"章节）
+5. 提交代码并遵循提交规范
+6. 更新版本号（如需要）并添加版本历史记录
 
 ## 常用命令
 
