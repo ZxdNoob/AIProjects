@@ -152,6 +152,16 @@ frontend/src/
 
 ### Commit 消息格式
 
+**推荐格式（带 emoji）：**
+```
+<emoji> <type>(<scope>): <subject>
+
+[optional body]
+
+[optional footer]
+```
+
+**标准格式（不带 emoji）：**
 ```
 <type>(<scope>): <subject>
 
@@ -160,9 +170,40 @@ frontend/src/
 [optional footer]
 ```
 
+> 💡 **建议**：尽可能使用 emoji 图标，让提交信息更加直观和易读。
+
 ### 格式说明
 
-#### 1. Type（类型，必需）
+#### 1. Emoji（图标，推荐）
+在 type 之前添加 emoji 图标，让提交信息更直观。常用 emoji 映射：
+
+- **✨ `feat`**: 新功能（feature）
+- **🐛 `fix`**: 修复 bug
+- **📝 `docs`**: 文档更新（documentation）
+- **💄 `style`**: 代码格式调整（不影响代码运行，如空格、分号、格式化等）
+- **♻️ `refactor`**: 代码重构（既不是新功能也不是修复 bug）
+- **⚡ `perf`**: 性能优化（performance）
+- **✅ `test`**: 添加或修改测试
+- **🔨 `build`**: 构建系统或外部依赖的更改（如 webpack、npm）
+- **👷 `ci`**: CI 配置文件和脚本的更改（如 GitHub Actions、Travis）
+- **🔧 `chore`**: 其他更改（如构建过程、辅助工具的变动）
+- **⏪ `revert`**: 回滚之前的提交
+
+**其他常用 emoji：**
+- **🎨**: UI/样式改进
+- **🚀**: 部署相关
+- **🔒**: 安全相关
+- **📦**: 依赖更新
+- **🎉**: 初始提交
+- **🔥**: 删除代码或文件
+- **💚**: 修复 CI 构建
+- **⬆️**: 升级依赖
+- **⬇️**: 降级依赖
+- **🔀**: 合并分支
+- **📱**: 响应式设计相关
+- **🎯**: 优化或改进
+
+#### 2. Type（类型，必需）
 提交类型必须是以下之一：
 
 - **`feat`**: 新功能（feature）
@@ -177,7 +218,7 @@ frontend/src/
 - **`chore`**: 其他更改（如构建过程、辅助工具的变动）
 - **`revert`**: 回滚之前的提交
 
-#### 2. Scope（范围，可选）
+#### 3. Scope（范围，可选）
 表示提交影响的范围，通常是模块或文件名。本项目常用 scope：
 
 - `dice`: 掷骰子相关功能
@@ -190,19 +231,19 @@ frontend/src/
 - `config`: 配置文件
 - `deps`: 依赖更新
 
-#### 3. Subject（主题，必需）
+#### 4. Subject（主题，必需）
 - 使用中文或英文描述本次提交的简短说明
 - 首字母小写（除非是专有名词）
 - 结尾不加句号
 - 使用祈使语气（如"添加"而不是"添加了"）
 - 长度不超过 72 个字符
 
-#### 4. Body（正文，可选）
+#### 5. Body（正文，可选）
 - 详细描述本次提交的动机和与之前行为的对比
 - 可以多行，每行不超过 72 个字符
 - 使用空行与 subject 和 footer 分隔
 
-#### 5. Footer（页脚，可选）
+#### 6. Footer（页脚，可选）
 - 用于记录 Breaking Changes（破坏性变更）
 - 或引用相关的 Issue/PR
 - 格式：`BREAKING CHANGE: <description>` 或 `Closes #123`
@@ -219,7 +260,46 @@ BREAKING CHANGE: API 响应格式从 {data: T} 改为 {result: T, code: number}
 
 ### 提交示例
 
-#### 基础示例
+#### 基础示例（推荐使用 emoji）
+```bash
+# 新功能
+✨ feat(dice): 添加 3D 骰子旋转动画
+
+# 修复 bug
+🐛 fix(stats): 修复统计数据不更新的问题
+
+# 样式调整
+💄 style(ui): 优化按钮悬浮效果
+
+# 文档更新
+📝 docs: 更新 README 中的安装说明
+
+# 代码重构
+♻️ refactor(api): 重构 API 错误处理逻辑
+
+# 性能优化
+⚡ perf(dice): 优化骰子动画性能，减少重绘次数
+
+# 测试
+✅ test(stats): 添加统计页面的单元测试
+
+# 构建相关
+🔨 build: 更新 Vite 到 7.0.4
+
+# 其他
+🔧 chore: 更新依赖包版本
+
+# UI/样式改进
+🎨 style(ui): 优化版本历史页面布局
+
+# 依赖更新
+📦 chore(deps): 升级 React 到 18.3.1
+
+# 响应式设计
+📱 style(ui): 优化移动端适配
+```
+
+#### 基础示例（不带 emoji）
 ```bash
 # 新功能
 feat(dice): 添加 3D 骰子旋转动画
@@ -249,7 +329,18 @@ build: 更新 Vite 到 7.0.4
 chore: 更新依赖包版本
 ```
 
-#### 带 Body 的示例
+#### 带 Body 的示例（推荐使用 emoji）
+```bash
+✨ feat(stats): 添加散点图统计功能
+
+在统计页面新增散点图可视化，展示每次掷骰子的时间分布。
+X轴显示时间（年月日时分秒），Y轴显示点数（1-6）。
+鼠标悬停可查看详细的时间信息。
+
+Closes #42
+```
+
+#### 带 Body 的示例（不带 emoji）
 ```bash
 feat(stats): 添加散点图统计功能
 
@@ -260,7 +351,19 @@ X轴显示时间（年月日时分秒），Y轴显示点数（1-6）。
 Closes #42
 ```
 
-#### Breaking Change 示例
+#### Breaking Change 示例（推荐使用 emoji）
+```bash
+✨ feat(api)!: 重构 API 响应格式
+
+BREAKING CHANGE: API 响应格式从 {data: T} 改为 {result: T, code: number}。
+所有前端 API 调用需要相应更新。
+
+迁移指南：
+- 旧格式: response.data
+- 新格式: response.result
+```
+
+#### Breaking Change 示例（不带 emoji）
 ```bash
 feat(api)!: 重构 API 响应格式
 
@@ -272,7 +375,20 @@ BREAKING CHANGE: API 响应格式从 {data: T} 改为 {result: T, code: number}�
 - 新格式: response.result
 ```
 
-#### 多行 Body 示例
+#### 多行 Body 示例（推荐使用 emoji）
+```bash
+⚡ perf(db): 优化数据库查询性能
+
+- 为 stats 表添加索引，提升查询速度
+- 使用连接池管理数据库连接
+- 优化历史记录查询的 SQL 语句
+
+性能提升：
+- 统计查询速度提升 60%
+- 历史记录查询速度提升 40%
+```
+
+#### 多行 Body 示例（不带 emoji）
 ```bash
 refactor(db): 优化数据库查询性能
 
@@ -288,6 +404,7 @@ refactor(db): 优化数据库查询性能
 ### 提交规范检查清单
 
 提交前请确认：
+- [ ] **推荐**：已添加合适的 emoji 图标（放在 type 之前）
 - [ ] Type 类型正确且符合规范
 - [ ] Scope 范围明确（如适用）
 - [ ] Subject 简洁明了，使用祈使语气
