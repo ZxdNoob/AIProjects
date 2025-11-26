@@ -1,0 +1,169 @@
+.dice3d-scene {
+  width: 200px;
+  height: 200px;
+  perspective: 800px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* 添加整体投影 */
+  filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.2));
+  
+  @media (max-width: 768px) {
+    width: 180px;
+    height: 180px;
+    perspective: 700px;
+  }
+  
+  @media (max-width: 480px) {
+    width: 160px;
+    height: 160px;
+    perspective: 600px;
+  }
+}
+.dice3d-cube {
+  width: 160px;
+  height: 160px;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.8s cubic-bezier(.23,1.12,.67,.99);
+  
+  @media (max-width: 768px) {
+    width: 144px;
+    height: 144px;
+  }
+  
+  @media (max-width: 480px) {
+    width: 128px;
+    height: 128px;
+  }
+}
+.dice3d-cube.rolling {
+  transition: transform 0.8s cubic-bezier(.23,1.12,.67,.99);
+}
+.dice3d-face {
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  /* 更真实的象牙白材质 */
+  background: 
+    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.95) 0%, transparent 50%),
+    linear-gradient(145deg, #fafafa 0%, #e8e8e8 50%, #f2f2f2 100%);
+  border-radius: 0;
+  /* 增强立体感的阴影 */
+  box-shadow: 
+    inset 2px 2px 4px rgba(255, 255, 255, 0.9),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.15),
+    0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  @media (max-width: 768px) {
+    width: 144px;
+    height: 144px;
+  }
+  
+  @media (max-width: 480px) {
+    width: 128px;
+    height: 128px;
+  }
+}
+.dice3d-face .dot {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  /* 默认黑色点数 */
+  background: 
+    radial-gradient(circle, #1a1a1a 0%, #2a2a2a 70%, #1a1a1a 100%);
+  border-radius: 50%;
+  /* 凹陷阴影效果 */
+  box-shadow: 
+    inset 2px 2px 4px rgba(0, 0, 0, 0.8),
+    inset -2px -2px 2px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(0, 0, 0, 0.3);
+  transform: translate(-50%, -50%);
+}
+
+/* 点数对应的圆点大小：点数越大，圆点越小 */
+.dice3d-face.dot-point-1 .dot {
+  width: 36px;
+  height: 36px;
+}
+
+.dice3d-face.dot-point-2 .dot {
+  width: 30px;
+  height: 30px;
+}
+
+.dice3d-face.dot-point-3 .dot {
+  width: 28px;
+  height: 28px;
+}
+
+.dice3d-face.dot-point-4 .dot {
+  width: 26px;
+  height: 26px;
+}
+
+.dice3d-face.dot-point-5 .dot {
+  width: 24px;
+  height: 24px;
+}
+
+.dice3d-face.dot-point-6 .dot {
+  width: 22px;
+  height: 22px;
+}
+
+/* 1点 - 红色，更大的尺寸 */
+.dice3d-face.dot-red .dot {
+  background: 
+    radial-gradient(circle, #c41e3a 0%, #a01d2e 70%, #8b1525 100%);
+  box-shadow: 
+    inset 2px 2px 4px rgba(0, 0, 0, 0.7),
+    inset -2px -2px 2px rgba(255, 255, 255, 0.1),
+    0 0 0 1px rgba(196, 30, 58, 0.4);
+}
+
+/* 6点 - 蓝色 */
+.dice3d-face.dot-blue .dot {
+  background: 
+    radial-gradient(circle, #1e88e5 0%, #1565c0 70%, #0d47a1 100%);
+  box-shadow: 
+    inset 2px 2px 4px rgba(0, 0, 0, 0.7),
+    inset -2px -2px 2px rgba(255, 255, 255, 0.1),
+    0 0 0 1px rgba(30, 136, 229, 0.4);
+}
+
+/* 其他点数 - 黑色（默认） */
+.dice3d-face.dot-black .dot {
+  background: 
+    radial-gradient(circle, #1a1a1a 0%, #2a2a2a 70%, #1a1a1a 100%);
+  box-shadow: 
+    inset 2px 2px 4px rgba(0, 0, 0, 0.8),
+    inset -2px -2px 2px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(0, 0, 0, 0.3);
+}.dice3d-face-front  { transform: translateZ(80px);}
+.dice3d-face-back   { transform: rotateY(180deg) translateZ(80px);}
+.dice3d-face-right  { transform: rotateY(90deg) translateZ(80px);}
+.dice3d-face-left   { transform: rotateY(-90deg) translateZ(80px);}
+.dice3d-face-top    { transform: rotateX(90deg) translateZ(80px);}
+.dice3d-face-bottom { transform: rotateX(-90deg) translateZ(80px);}
+
+@media (max-width: 768px) {
+  .dice3d-face-front  { transform: translateZ(72px);}
+  .dice3d-face-back   { transform: rotateY(180deg) translateZ(72px);}
+  .dice3d-face-right  { transform: rotateY(90deg) translateZ(72px);}
+  .dice3d-face-left   { transform: rotateY(-90deg) translateZ(72px);}
+  .dice3d-face-top    { transform: rotateX(90deg) translateZ(72px);}
+  .dice3d-face-bottom { transform: rotateX(-90deg) translateZ(72px);}
+}
+
+@media (max-width: 480px) {
+  .dice3d-face-front  { transform: translateZ(64px);}
+  .dice3d-face-back   { transform: rotateY(180deg) translateZ(64px);}
+  .dice3d-face-right  { transform: rotateY(90deg) translateZ(64px);}
+  .dice3d-face-left   { transform: rotateY(-90deg) translateZ(64px);}
+  .dice3d-face-top    { transform: rotateX(90deg) translateZ(64px);}
+  .dice3d-face-bottom { transform: rotateX(-90deg) translateZ(64px);}
+}

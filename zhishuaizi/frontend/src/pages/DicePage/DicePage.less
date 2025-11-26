@@ -1,0 +1,390 @@
+.dice-pc-bg {
+  min-height: 100vh;
+  width: 100vw;
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(102, 126, 234, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(118, 75, 162, 0.08) 0%, transparent 50%),
+    linear-gradient(135deg, #f8f9ff 0%, #f0f5ff 50%, #e6f7ff 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 0;
+}
+.dice-pc-card {
+  width: 680px;
+  max-width: 95vw; // 移动端适配
+  border-radius: 32px;
+  box-shadow: 
+    0 20px 60px rgba(102, 126, 234, 0.15),
+    0 8px 24px rgba(118, 75, 162, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  padding: 64px 56px 56px 56px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box; // 确保 padding 包含在宽度内
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  
+  @media (max-width: 768px) {
+    padding: 48px 32px 40px 32px;
+    width: 100%;
+    max-width: 100%;
+    border-radius: 24px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 32px 24px 32px 24px;
+    border-radius: 20px;
+  }
+}
+.dice-pc-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  gap: 20px;
+  min-height: 56px;
+  
+  // 标题区域：防止被挤压
+  .dice-pc-header-title {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+    min-width: 0; // 允许缩小，但通过标题设置防止过度挤压
+  }
+  
+  // 按钮组区域：右对齐，防止挤压标题
+  .dice-pc-header-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-shrink: 0; // 按钮组不缩小
+    margin-left: auto; // 确保右对齐
+  }
+  
+  // 标题样式
+  .dice-pc-title {
+    margin: 0 !important;
+    line-height: 1.2 !important;
+    font-size: 36px !important;
+    font-weight: 700 !important;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    white-space: nowrap; // 防止标题换行
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 0; // 标题不缩小
+    min-width: fit-content; // 保持标题完整显示
+    letter-spacing: -0.5px;
+  }
+  
+  // 响应式设计：移动端优化
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 32px;
+    
+    .dice-pc-header-title {
+      flex: 1 1 100%; // 移动端标题占满整行
+      min-width: 0;
+      
+      .dice-pc-title {
+        font-size: 28px !important; // 移动端稍微缩小字体
+      }
+    }
+    
+    .dice-pc-header-actions {
+      flex: 1 1 100%; // 移动端按钮组占满整行
+      justify-content: flex-end; // 右对齐
+    }
+  }
+  
+  // 小屏幕优化：进一步缩小间距
+  @media (max-width: 480px) {
+    gap: 12px;
+    margin-bottom: 24px;
+    
+    .dice-pc-header-title {
+      gap: 12px;
+      
+      // Logo 在移动端稍微缩小
+      .dice-logo {
+        width: 48px !important;
+        height: 48px !important;
+      }
+      
+      .dice-pc-title {
+        font-size: 24px !important;
+      }
+    }
+    
+    .dice-pc-header-actions {
+      gap: 10px;
+      
+      // 按钮在移动端可以只显示图标
+      .ant-btn {
+        padding: 8px 14px !important;
+        font-size: 16px !important;
+        
+        span:not(.anticon) {
+          display: none; // 移动端隐藏文字，只显示图标
+        }
+      }
+    }
+  }
+}
+.dice-pc-stats-btn {
+  color: #667eea !important;
+  font-size: 18px;
+  font-weight: 600;
+  padding: 8px 20px !important;
+  height: 44px !important;
+  border-radius: 22px !important;
+  border: none !important;
+  background: transparent !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative;
+  overflow: hidden;
+  
+  // 强制按钮垂直居中
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  vertical-align: middle !important;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 20px;
+  }
+  
+  &:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3) !important;
+    
+    &::before {
+      opacity: 1;
+    }
+    
+    .anticon, span {
+      color: white !important;
+      position: relative;
+      z-index: 1;
+    }
+  }
+  
+  &:active {
+    transform: translateY(0px) !important;
+  }
+  
+  .anticon, span {
+    transition: color 0.3s ease;
+    position: relative;
+    z-index: 1;
+  }
+}
+.dice-pc-center {
+  margin: 56px 0 48px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 260px;
+  padding: 20px 0;
+  
+  @media (max-width: 768px) {
+    margin: 48px 0 40px 0;
+    min-height: 220px;
+    padding: 16px 0;
+  }
+  
+  @media (max-width: 480px) {
+    margin: 40px 0 32px 0;
+    min-height: 200px;
+    padding: 12px 0;
+  }
+}
+.dice-pc-result {
+  font-size: 26px;
+  margin-bottom: 40px;
+  margin-top: 0;
+  text-align: center;
+  min-height: 60px; // 固定高度防止跳动
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  color: #333;
+  
+  .dice-pc-point {
+    font-size: 56px;
+    font-weight: 800;
+    color: #667eea;
+    margin-left: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-block;
+    min-width: 60px;
+    text-align: center;
+    text-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+    
+    &.rolling-number {
+      animation: numberRolling 0.1s ease-in-out infinite alternate;
+      color: #764ba2;
+      text-shadow: 0 0 16px rgba(118, 75, 162, 0.5);
+    }
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 22px;
+    margin-bottom: 36px;
+    
+    .dice-pc-point {
+      font-size: 48px;
+      min-width: 50px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 20px;
+    margin-bottom: 32px;
+    
+    .dice-pc-point {
+      font-size: 40px;
+      min-width: 45px;
+      margin-left: 8px;
+    }
+  }
+}
+
+.dice-pc-hint {
+  color: #999;
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  
+  @media (max-width: 768px) {
+    font-size: 18px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 16px;
+  }
+}
+
+@keyframes numberRolling {
+  0% {
+    transform: scale(1) rotateY(0deg);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.15) rotateY(8deg);
+    opacity: 1;
+  }
+}
+.dice-pc-btn {
+  width: 280px;
+  height: 64px;
+  font-size: 20px;
+  font-weight: 700;
+  border-radius: 32px;
+  border: none !important;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  box-shadow: 
+    0 12px 32px rgba(102, 126, 234, 0.4),
+    0 6px 16px rgba(118, 75, 162, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.5px;
+  
+  @media (max-width: 768px) {
+    width: 240px;
+    height: 56px;
+    font-size: 18px;
+  }
+  
+  @media (max-width: 480px) {
+    width: 200px;
+    height: 52px;
+    font-size: 16px;
+  }
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.6s;
+  }
+  
+  &:hover {
+    transform: translateY(-3px) scale(1.02) !important;
+    box-shadow: 
+      0 16px 40px rgba(102, 126, 234, 0.5),
+      0 8px 20px rgba(118, 75, 162, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+    background: linear-gradient(135deg, #7c8ff0 0%, #8a5cb8 100%) !important;
+    
+    &::before {
+      left: 100%;
+    }
+  }
+  
+  &:active {
+    transform: translateY(0px) !important;
+    box-shadow: 
+      0 4px 16px rgba(102, 126, 234, 0.4),
+      0 2px 8px rgba(118, 75, 162, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+  }
+  
+  &:focus {
+    outline: none !important;
+    box-shadow: 
+      0 8px 24px rgba(102, 126, 234, 0.4),
+      0 4px 12px rgba(118, 75, 162, 0.3),
+      0 0 0 3px rgba(102, 126, 234, 0.3) !important;
+  }
+  
+  // Loading 状态样式
+  &.ant-btn-loading {
+    background: linear-gradient(135deg, #9ca8f2 0%, #a67bc4 100%) !important;
+    transform: none !important;
+    
+    .ant-btn-loading-icon {
+      color: white;
+    }
+  }
+  
+  // 确保文字颜色
+  span {
+    color: white !important;
+    position: relative;
+    z-index: 1;
+  }
+}
+.dice-rolling {
+  animation: dice-spin 0.8s cubic-bezier(.23,1.12,.67,.99);
+}
+@keyframes dice-spin {
+  0% { transform: rotate(0deg);}
+  100% { transform: rotate(720deg);}
+}

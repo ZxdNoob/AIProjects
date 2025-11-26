@@ -1,0 +1,457 @@
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+// 首页容器
+.home-container {
+  min-height: 100vh;
+  width: 100vw;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  box-sizing: border-box;
+}
+
+// 背景装饰
+.home-bg-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.bg-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  animation: float 20s infinite ease-in-out;
+  
+  &.bg-circle-1 {
+    width: 300px;
+    height: 300px;
+    top: -150px;
+    right: -150px;
+    animation-delay: 0s;
+  }
+  
+  &.bg-circle-2 {
+    width: 200px;
+    height: 200px;
+    bottom: -100px;
+    left: -100px;
+    animation-delay: 5s;
+  }
+  
+  &.bg-circle-3 {
+    width: 150px;
+    height: 150px;
+    top: 50%;
+    left: 10%;
+    animation-delay: 10s;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.3;
+  }
+  33% {
+    transform: translate(30px, -30px) scale(1.1);
+    opacity: 0.5;
+  }
+  66% {
+    transform: translate(-30px, 30px) scale(0.9);
+    opacity: 0.4;
+  }
+}
+
+// 主要内容
+.home-content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+}
+
+// 头部区域
+.home-header {
+  text-align: center;
+  color: white;
+  
+  .home-logo-wrapper {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 24px;
+    
+    .home-logo-glow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 180px;
+      height: 180px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+      border-radius: 50%;
+      animation: pulse 2s infinite ease-in-out;
+      z-index: -1;
+    }
+  }
+  
+  .home-title {
+    color: white !important;
+    font-size: 48px !important;
+    font-weight: 700 !important;
+    margin-bottom: 12px !important;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    background: none !important;
+    -webkit-text-fill-color: white !important;
+  }
+  
+  .home-subtitle {
+    display: block;
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 16px;
+    font-weight: 300;
+    letter-spacing: 2px;
+  }
+  
+  .home-tagline {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 0.3;
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// 功能卡片区域
+.home-features {
+  width: 100%;
+  max-width: 1200px;
+  padding-bottom: 20px;
+  position: relative;
+  
+  .home-features-carousel {
+    position: relative;
+    
+    // 隐藏箭头
+    .slick-arrow {
+      display: none !important;
+    }
+    
+    .slick-list {
+      margin: 0 -12px;
+      padding: 8px 0;
+      height: 316px !important;
+    }
+    
+    .slick-slide {
+      padding: 0 12px;
+      
+      > div {
+        height: 100%;
+      }
+    }
+    
+    // 轮播点样式
+    .slick-dots {
+      bottom: -30px;
+      
+      li {
+        button {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.5);
+          transition: all 0.3s ease;
+          
+          &:hover {
+            background: rgba(255, 255, 255, 0.8);
+          }
+        }
+        
+        &.slick-active {
+          button {
+            background: white;
+            width: 24px;
+            border-radius: 5px;
+          }
+        }
+      }
+    }
+    
+  }
+  
+  .home-feature-slide {
+    height: 100%;
+    padding: 0;
+  }
+}
+
+.home-feature-card {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(10px);
+  border-radius: 24px !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+  padding: 24px !important;
+  text-align: center;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  height: 100%;
+  min-height: 240px;
+  
+  &:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15) !important;
+    border-color: rgba(102, 126, 234, 0.5) !important;
+  }
+  
+  &.primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    position: relative;
+    overflow: hidden;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+      animation: rotate 10s linear infinite;
+    }
+    
+    .feature-title {
+      color: white !important;
+    }
+    
+    .feature-description {
+      color: rgba(255, 255, 255, 0.9) !important;
+    }
+    
+    .feature-icon-wrapper {
+      background: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 16px rgba(255, 255, 255, 0.2);
+      
+      .feature-icon {
+        color: white;
+      }
+    }
+  }
+  
+  .feature-icon-wrapper {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4px;
+    transition: all 0.3s ease;
+    
+    .feature-icon {
+      font-size: 28px;
+      color: white;
+    }
+  }
+  
+  &:hover .feature-icon-wrapper {
+    transform: rotate(5deg) scale(1.1);
+  }
+  
+  .feature-title {
+    margin: 0 !important;
+    font-size: 20px !important;
+    font-weight: 600 !important;
+    color: #333 !important;
+  }
+  
+  .feature-description {
+    display: block;
+    color: #666;
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 4px;
+  }
+  
+  .feature-button {
+    margin-top: auto;
+    width: 100%;
+    height: 38px;
+    border-radius: 19px;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+  }
+  
+  &.primary .feature-button {
+    background: white !important;
+    color: #667eea !important;
+    border: none !important;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.9) !important;
+      box-shadow: 0 4px 16px rgba(255, 255, 255, 0.3);
+    }
+  }
+}
+
+// 底部
+.home-footer {
+  text-align: center;
+  
+  .home-footer-text {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+  }
+}
+
+// 响应式设计
+@media (max-width: 1200px) {
+  .home-features {
+    .home-features-carousel {
+      .slick-prev {
+        left: -30px;
+      }
+      
+      .slick-next {
+        right: -30px;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .home-container {
+    padding: 20px 16px;
+  }
+  
+  .home-header {
+    .home-logo-wrapper {
+      .home-logo-glow {
+        width: 140px;
+        height: 140px;
+      }
+    }
+    
+    .home-title {
+      font-size: 32px !important;
+    }
+    
+    .home-subtitle {
+      font-size: 14px;
+    }
+    
+    .home-tagline {
+      font-size: 12px;
+      padding: 6px 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+  }
+  
+  .home-features {
+    .home-features-carousel {
+      .slick-prev,
+      .slick-next {
+        display: none !important;
+      }
+      
+      .slick-dots {
+        bottom: -25px;
+      }
+    }
+  }
+  
+  .home-feature-card {
+    padding: 20px !important;
+    min-height: 240px;
+    
+    .feature-icon-wrapper {
+      width: 64px;
+      height: 64px;
+      
+      .feature-icon {
+        font-size: 28px;
+      }
+    }
+    
+    .feature-title {
+      font-size: 20px !important;
+    }
+  }
+  
+  .home-content {
+    gap: 24px;
+  }
+  
+  .bg-circle {
+    &.bg-circle-1 {
+      width: 200px;
+      height: 200px;
+    }
+    
+    &.bg-circle-2 {
+      width: 150px;
+      height: 150px;
+    }
+    
+    &.bg-circle-3 {
+      width: 100px;
+      height: 100px;
+    }
+  }
+}
