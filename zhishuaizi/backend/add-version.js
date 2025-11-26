@@ -10,7 +10,11 @@
  *   node add-version.js 2.0.0 major "重大更新描述"
  */
 
-const { addVersionHistory, getVersionHistory } = require('./db');
+const { addVersionHistory, getVersionHistory } = require('./version_history_db');
+
+// 初始化版本历史数据库
+const { initVersionHistoryDB } = require('./version_history_db');
+initVersionHistoryDB();
 
 const args = process.argv.slice(2);
 

@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
-const { initDB, getStats, incrementPoint, addHistory, getHistory, addVersionHistory, getVersionHistory, addRoadmapItem, updateRoadmapItem, deleteRoadmapItem, getRoadmapItems } = require('./db');
+const { initDB, getStats, incrementPoint, addHistory, getHistory, addRoadmapItem, updateRoadmapItem, deleteRoadmapItem, getRoadmapItems } = require('./db');
+const { initVersionHistoryDB, addVersionHistory, getVersionHistory } = require('./version_history_db');
 
 const app = express();
 const PORT = 3001;
@@ -15,6 +16,14 @@ if (initDB) {
   console.log('数据库初始化完成');
 } else {
   console.error('initDB 函数未定义');
+}
+
+// 初始化版本历史数据库
+if (initVersionHistoryDB) {
+  initVersionHistoryDB();
+  console.log('版本历史数据库初始化完成');
+} else {
+  console.error('initVersionHistoryDB 函数未定义');
 }
 
 /**
