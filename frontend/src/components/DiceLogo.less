@@ -1,0 +1,217 @@
+.dice-logo {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1000px;
+  
+  .dice-logo-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+  }
+  
+  // 骰子立方体
+  .dice-logo-cube {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    // 默认角度：显示前面和右面
+    transform: rotateX(-20deg) rotateY(45deg);
+  }
+  
+  // 骰子面
+  .dice-logo-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 12%;
+    box-sizing: border-box;
+    
+    // 渐变背景 - 紫蓝色调
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 
+      inset 0 2px 4px rgba(255, 255, 255, 0.3),
+      inset 0 -2px 4px rgba(0, 0, 0, 0.2),
+      0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  // 前面
+  .dice-logo-front {
+    transform: rotateY(0deg) translateZ(50%);
+  }
+  
+  // 右面
+  .dice-logo-right {
+    transform: rotateY(90deg) translateZ(50%);
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  }
+  
+  // 上面
+  .dice-logo-top {
+    transform: rotateX(90deg) translateZ(50%);
+    background: linear-gradient(135deg, #8b5cf6 0%, #667eea 100%);
+  }
+  
+  // 左面
+  .dice-logo-left {
+    transform: rotateY(-90deg) translateZ(50%);
+    background: linear-gradient(135deg, #667eea 0%, #8b5cf6 100%);
+  }
+  
+  // 下面
+  .dice-logo-bottom {
+    transform: rotateX(-90deg) translateZ(50%);
+    background: linear-gradient(135deg, #764ba2 0%, #8b5cf6 100%);
+  }
+  
+  // 后面
+  .dice-logo-back {
+    transform: rotateY(180deg) translateZ(50%);
+    background: linear-gradient(135deg, #8b5cf6 0%, #764ba2 100%);
+  }
+  
+  // 骰子点
+  .dice-logo-dot {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #ffffff, #f0f0f0);
+    box-shadow: 
+      0 2px 4px rgba(0, 0, 0, 0.2),
+      inset 0 1px 2px rgba(255, 255, 255, 0.8);
+  }
+  
+  // 前面 3 点布局（对角线）
+  .dice-logo-front {
+    .dice-logo-dot {
+      width: 18%;
+      height: 18%;
+      
+      &:nth-child(1) {
+        top: 20%;
+        left: 20%;
+      }
+      &:nth-child(2) {
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      &:nth-child(3) {
+        bottom: 20%;
+        right: 20%;
+      }
+    }
+  }
+  
+  // 后面 6 点布局（2x3网格）
+  .dice-logo-back {
+    .dice-logo-dot {
+      width: 15%;
+      height: 15%;
+      
+      &:nth-child(1) {
+        top: 20%;
+        left: 20%;
+      }
+      &:nth-child(2) {
+        top: 20%;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      &:nth-child(3) {
+        top: 20%;
+        right: 20%;
+      }
+      &:nth-child(4) {
+        bottom: 20%;
+        left: 20%;
+      }
+      &:nth-child(5) {
+        bottom: 20%;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      &:nth-child(6) {
+        bottom: 20%;
+        right: 20%;
+      }
+    }
+  }
+  
+  // 光晕效果
+  .dice-logo-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 120%;
+    height: 120%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(
+      circle,
+      rgba(102, 126, 234, 0.3) 0%,
+      rgba(118, 75, 162, 0.2) 40%,
+      transparent 70%
+    );
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  // 动画效果
+  &.animated {
+    .dice-logo-cube {
+      animation: diceLogoRotate 3s ease-in-out infinite;
+    }
+    
+    .dice-logo-glow {
+      animation: diceLogoGlow 2s ease-in-out infinite;
+    }
+  }
+  
+  // 悬停效果
+  &:hover {
+    .dice-logo-cube {
+      transform: rotateX(-20deg) rotateY(45deg) scale(1.05);
+    }
+    
+    .dice-logo-glow {
+      opacity: 1;
+    }
+  }
+}
+
+// 旋转动画
+@keyframes diceLogoRotate {
+  0%, 100% {
+    transform: rotateX(-20deg) rotateY(45deg);
+  }
+  25% {
+    transform: rotateX(-20deg) rotateY(135deg);
+  }
+  50% {
+    transform: rotateX(20deg) rotateY(135deg);
+  }
+  75% {
+    transform: rotateX(20deg) rotateY(45deg);
+  }
+}
+
+// 光晕动画
+@keyframes diceLogoGlow {
+  0%, 100% {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+}
+

@@ -1,0 +1,68 @@
+.home-button {
+  color: #667eea !important;
+  font-size: 18px;
+  font-weight: 600;
+  padding: 8px 20px !important;
+  height: 44px !important;
+  border-radius: 22px !important;
+  border: none !important;
+  background: transparent !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative;
+  overflow: hidden;
+  
+  // 强制按钮垂直居中
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  vertical-align: middle !important;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 20px;
+  }
+  
+  &:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3) !important;
+    
+    &::before {
+      opacity: 1;
+    }
+    
+    .anticon, span {
+      color: white !important;
+      position: relative;
+      z-index: 1;
+    }
+  }
+  
+  &:active {
+    transform: translateY(0px) !important;
+  }
+  
+  &:focus {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  
+  &:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  
+  .anticon, span {
+    transition: color 0.3s ease;
+    position: relative;
+    z-index: 1;
+  }
+}
+
