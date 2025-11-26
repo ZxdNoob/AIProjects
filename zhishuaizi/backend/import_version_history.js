@@ -1,0 +1,203 @@
+#!/usr/bin/env node
+
+/**
+ * 从 CHANGELOG.md 导入版本历史记录到数据库
+ * 使用方法: node import_version_history.js
+ */
+
+const { addVersionHistory, getVersionHistory } = require('./version_history_db');
+const { initVersionHistoryDB } = require('./version_history_db');
+
+// 初始化数据库
+initVersionHistoryDB();
+
+// 版本历史数据（从 CHANGELOG.md 提取）
+const versionHistoryData = [
+  {
+    version: '1.8.1',
+    changeType: 'patch',
+    description: '首页轮播图功能优化。轮播图布局改进：将功能模块从网格布局改为轮播图展示，始终在一行显示；使用 Ant Design Carousel 组件实现轮播功能；支持自动播放，每 3 秒自动切换；支持手动控制，可通过轮播点切换；响应式设计，根据屏幕尺寸动态显示 1-3 个卡片。轮播图尺寸优化：固定 slick-list 高度为 316px，确保轮播图高度一致；优化轮播图容器底部内边距，减小不必要的空间；调整轮播图列表内边距，使布局更紧凑。卡片样式调整：优化卡片尺寸，调整最小高度、内边距和圆角；调整图标、标题、描述文字和按钮的尺寸；优化卡片内部间距，使内容布局更合理。轮播点指示器优化：优化轮播点指示器位置，减小与轮播图的间隙；自定义轮播点样式，激活状态显示为白色长条。',
+    releaseDate: '2025-11-22'
+  },
+  {
+    version: '1.8.0',
+    changeType: 'minor',
+    description: '产品路线图功能与组件优化。产品路线图页面：新增产品路线图页面，采用看板式布局，分为"规划中"、"进行中"、"已完成"三列；支持需求的增删改查操作，包括标题、描述、状态、优先级、预计完成时间等字段；需求卡片显示完整信息：标题、描述、优先级标签、状态标签、创建时间、更新时间和预计完成时间；支持逾期提醒，预计完成时间已过且未完成的需求会红色高亮显示；空状态提示垂直居中对齐，提升视觉效果；每个看板列独立滚动，优化用户体验。EllipsisTooltip 全局组件：创建可复用的文本省略号 Tooltip 组件，支持单行和多行省略；自动检测文本是否溢出，仅在溢出时显示 Tooltip；高度可配置，支持自定义行数、样式、对齐方式等；使用 ResizeObserver 和 MutationObserver 智能监听内容变化；在路线图页面标题中使用，支持两行显示，超出部分显示省略号。日期选择器优化：配置 dayjs 中文语言包，确保日期选择器默认使用中文显示；所有时间字段（预计完成时间、创建时间、更新时间）显示完整的日期时间格式（包含时分秒）。表单弹框优化：优化表单重置时机，在弹框完全关闭后（afterClose）重置表单项，避免关闭动画过程中表单被清空；优化弹框头部设计，采用现代简洁风格，白色背景配渐变文字标题；关闭按钮使用圆形设计，带半透明背景，提升视觉效果和可识别性。时区修复：修复创建时间未使用东八区时间的问题，确保所有时间字段统一使用东八区时间；前端时间解析优化，正确处理数据库返回的东八区时间格式。后端 API 扩展：新增路线图相关的数据库表和 API 接口（GET、POST、PUT、DELETE）；支持需求的完整生命周期管理。',
+    releaseDate: '2025-11-22'
+  },
+  {
+    version: '1.7.2',
+    changeType: 'patch',
+    description: '掷骰子页面重新设计和图标优化。页面重新设计：标题从"一起掷骰子"简化为"掷骰子"，更简洁明了；卡片宽度从 480px 增加到 680px，提供更宽敞的视觉空间；标题字体从默认大小增加到 36px，字重 700，更突出；Logo 尺寸从 48px 增加到 56px，与整体设计更协调。元素尺寸优化：骰子尺寸从 120px 增加到 200px（场景），立方体从 100px 增加到 160px；按钮尺寸从 200×56px 增加到 280×64px，更易点击；点数显示从 36px 增加到 56px，更清晰醒目；骰子圆点尺寸相应增大，阴影效果更明显。视觉效果增强：背景采用多层径向渐变，增加层次感；卡片使用半透明白色背景和毛玻璃效果（backdrop-filter）；增强阴影效果，使用多层阴影营造立体感；优化间距和布局，提升视觉层次。SVG 掷骰子准备图标：创建全新的 SVG 图标组件，替代问号图标；展示双手准备投掷骰子的动作，更直观地表达功能；使用项目主题色（紫蓝渐变），保持设计一致性；添加丰富的动画效果：整体浮动、手部微动、骰子脉冲、动态线条；图标尺寸 220px，在页面中更突出。图标位置优化：调整垂直间距，让图标在页面中更居中；优化与标题、提示文字、按钮之间的间距；增加内边距，给图标更多呼吸空间；完善响应式设计，在不同屏幕尺寸下都有合适的间距。',
+    releaseDate: '2025-11-22'
+  },
+  {
+    version: '1.7.1',
+    changeType: 'patch',
+    description: '导航和布局优化。返回首页功能：创建统一的 HomeButton 组件，使用紫蓝渐变主题色和优雅的悬停效果；在所有页面（DicePage、StatsPage、VersionHistoryPage）添加返回首页按钮；提升页面导航体验，方便用户快速返回首页。页面布局优化：重新设计 DicePage 头部布局，解决按钮挤压标题的问题；使用灵活的 Flexbox 布局，确保标题在不同屏幕尺寸下完整显示；添加完整的响应式设计，移动端优化按钮显示和间距；优化代码结构，移除内联样式，使用语义化 CSS 类名。开发体验提升：同步提交规范配置，移除 commit 消息长度限制；添加版本号更新规则，确保版本信息同步更新到数据库和 CHANGELOG.md；完善 Cursor 规则配置，规范版本管理流程。',
+    releaseDate: '2025-11-22'
+  },
+  {
+    version: '1.7.0',
+    changeType: 'major',
+    description: '版本历史管理和首页优化。版本历史功能：新增版本历史页面，数据库管理的版本更新记录；风琴（Accordion）方式展示版本信息，支持单个/多个展开模式切换；支持分页浏览，可自定义每页显示数量；固定头部和底部，流畅滚动体验；自定义滚动条样式，毛玻璃效果。首页重新设计：全新现代化首页设计，渐变背景和浮动装饰；卡片式功能展示，主功能突出显示；流畅的动画效果和交互体验；响应式布局，完美适配移动端。用户体验优化：全局移除按钮焦点边框，统一视觉体验；优化滚动性能，支持平滑滚动；改进页面布局，提升可读性和可用性。技术优化：添加 Ant Design 中文语言包；优化样式结构，提升代码可维护性。',
+    releaseDate: '2025-11-22'
+  },
+  {
+    version: '1.6.0',
+    changeType: 'minor',
+    description: 'Logo 和品牌设计升级。顶级 Logo 组件：创建 DiceLogo 组件，采用 3D CSS 立体效果；实现紫蓝渐变配色（#667eea → #764ba2）；支持动画模式（首页自动旋转）和悬停光晕效果；前面显示 3 点，后面显示 6 点，立体感强。品牌标识优化：统一所有页面标题为「一起掷骰子」；添加英文副标题 "Let\'s Roll the Dice Together"；创建 SVG favicon，提升品牌识别度；所有标题采用渐变文字效果。视觉体验提升：Logo 在所有页面统一展示；首页 Logo 自动旋转动画；其他页面 Logo 悬停光晕效果；整体视觉风格更加统一和专业。',
+    releaseDate: '2025-11-22'
+  },
+  {
+    version: '1.5.0',
+    changeType: 'minor',
+    description: '加权随机算法优化。智能概率分布：实现基于累积分布函数（CDF）的加权随机算法；1、2、5、6 点概率降低至各 10%；3、4 点概率提升至各 30%；采用业界标准的算法实现，高效且准确。算法优化：使用 CDF 方法替代均匀随机分布；时间复杂度 O(n)，适合小规模选项；代码结构清晰，易于维护和调整。',
+    releaseDate: '2025-11-22'
+  },
+  {
+    version: '1.4.0',
+    changeType: 'minor',
+    description: '散点图统计功能。新增散点图可视化：统计页面添加时间分布散点图；X轴显示时间（年月日时分秒），Y轴显示点数（1-6）；鼠标悬停显示详细的时间信息；Y轴刻度只显示整数值，提升可读性。数据库扩展：新增 `dice_history` 表存储每次掷骰子的记录；每次掷骰子自动保存点数和时间戳；新增 `/api/history` 接口获取历史记录。统计页面优化：扩大卡片宽度至 1400px；改为左右布局：左侧散点图，右侧统计表格；统一两个容器的样式（背景、圆角、阴影、内边距）；优化刷新按钮样式，添加图标和悬停旋转动画；响应式设计：小屏幕自动切换为上下布局。技术栈更新：前端新增 ECharts 和 echarts-for-react 依赖。',
+    releaseDate: '2025-11-22'
+  },
+  {
+    version: '1.3.0',
+    changeType: 'minor',
+    description: 'UI/UX 大幅优化。按钮设计全面升级：主按钮：采用紫蓝渐变背景，立体阴影效果，光泽扫过动画；次要按钮：无边框透明设计，悬浮时渐变填充效果；统一的交互动画：悬浮上浮、点击回弹、平滑过渡。布局对齐优化：修复标题与按钮的垂直居中对齐问题；统一两个页面的布局标准。表格样式美化：圆角设计和渐变阴影；渐变表头背景；悬浮行高亮效果。',
+    releaseDate: '2025-11-22'
+  },
+  {
+    version: '1.2.0',
+    changeType: 'minor',
+    description: '数据库优化。修复重复数据问题：清理数据库中的重复点数记录；添加唯一约束防止未来重复；合并历史统计数据。数据完整性保证：每个点数只保留一条记录；保持历史统计数据的准确性。',
+    releaseDate: '2025-11-22'
+  },
+  {
+    version: '1.1.0',
+    changeType: 'minor',
+    description: '骰子显示修复。点数一致性修复：修复骰子 3D 显示与实际点数不匹配的问题；优化骰子旋转映射逻辑；确保视觉显示与数值完全一致。动画时序优化：调整点数显示的延迟时间；确保骰子动画完全停止后再显示结果。',
+    releaseDate: '2025-11-22'
+  },
+  {
+    version: '1.0.0',
+    changeType: 'major',
+    description: '项目初始版本。核心功能实现：3D 骰子组件开发；掷骰子随机数生成；统计数据记录和显示。基础架构搭建：React + TypeScript 前端框架；Node.js + Express 后端服务；SQLite 数据库集成。页面设计：掷骰子主页面；统计数据页面；响应式布局设计。',
+    releaseDate: '2025-11-22'
+  }
+];
+
+// 导入版本历史记录
+function importVersionHistory() {
+  console.log('开始导入版本历史记录...\n');
+  
+  let imported = 0;
+  let updated = 0;
+  let errors = 0;
+  
+  // 按版本号从旧到新排序（v1.0.0 到 v1.8.1）
+  const sortedData = versionHistoryData.sort((a, b) => {
+    const aParts = a.version.split('.').map(Number);
+    const bParts = b.version.split('.').map(Number);
+    for (let i = 0; i < 3; i++) {
+      if (aParts[i] !== bParts[i]) {
+        return aParts[i] - bParts[i];
+      }
+    }
+    return 0;
+  });
+  
+  let index = 0;
+  
+  function processNext() {
+    if (index >= sortedData.length) {
+      // 所有记录处理完成
+      console.log('\n导入完成！');
+      console.log(`成功导入: ${imported} 条`);
+      console.log(`更新: ${updated} 条`);
+      if (errors > 0) {
+        console.log(`错误: ${errors} 条`);
+      }
+      
+      // 显示所有版本历史
+      getVersionHistory((err, history) => {
+        if (err) {
+          console.error('获取版本历史失败:', err);
+          process.exit(1);
+        }
+        
+        console.log(`\n当前数据库中的版本历史 (共 ${history.length} 条):`);
+        history.forEach((v) => {
+          const date = new Date(v.release_date).toLocaleDateString('zh-CN');
+          console.log(`  - v${v.version} (${v.change_type}) - ${date}`);
+        });
+        
+        process.exit(0);
+      });
+      return;
+    }
+    
+    const item = sortedData[index];
+    index++;
+    
+    // 使用 SQL 直接插入，指定发布日期
+    const sqlite3 = require('sqlite3').verbose();
+    const path = require('path');
+    const dbPath = path.resolve(__dirname, 'version_history.db');
+    const db = new sqlite3.Database(dbPath);
+    
+    // 检查版本是否已存在
+    db.get('SELECT id FROM version_history WHERE version = ?', [item.version], (err, row) => {
+      if (err) {
+        console.error(`✗ 检查版本 ${item.version} 失败:`, err);
+        errors++;
+        db.close();
+        processNext();
+        return;
+      }
+      
+      if (row) {
+        // 版本已存在，更新记录
+        db.run(
+          'UPDATE version_history SET description = ?, change_type = ?, release_date = ? WHERE version = ?',
+          [item.description, item.changeType, item.releaseDate, item.version],
+          function (updateErr) {
+            if (updateErr) {
+              console.error(`✗ 更新版本 ${item.version} 失败:`, updateErr);
+              errors++;
+            } else {
+              console.log(`✓ 更新: v${item.version} (${item.changeType})`);
+              updated++;
+            }
+            db.close();
+            processNext();
+          }
+        );
+      } else {
+        // 版本不存在，插入新记录
+        db.run(
+          'INSERT INTO version_history (version, description, change_type, release_date) VALUES (?, ?, ?, ?)',
+          [item.version, item.description, item.changeType, item.releaseDate],
+          function (insertErr) {
+            if (insertErr) {
+              console.error(`✗ 导入版本 ${item.version} 失败:`, insertErr);
+              errors++;
+            } else {
+              console.log(`✓ 导入: v${item.version} (${item.changeType})`);
+              imported++;
+            }
+            db.close();
+            processNext();
+          }
+        );
+      }
+    });
+  }
+  
+  // 开始处理
+  processNext();
+}
+
+// 执行导入
+importVersionHistory();
+
