@@ -202,11 +202,13 @@ export default function VersionHistoryPage() {
             </div>
           )}
           {loading ? (
-            <div style={{ textAlign: 'center', padding: '40px' }}>
+            <div className="version-history-empty-state">
               <Text type="secondary">加载中...</Text>
             </div>
           ) : history.length === 0 ? (
-            <Empty description="暂无版本历史记录" />
+            <div className="version-history-empty-state">
+              <Empty description="暂无版本历史记录" />
+            </div>
           ) : (
             <div className="version-history-accordion-wrapper">
               <div className="version-history-summary">
