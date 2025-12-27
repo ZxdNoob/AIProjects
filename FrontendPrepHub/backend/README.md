@@ -717,6 +717,7 @@ sudo systemctl status mongod  # Linux
 - [项目根目录 README](../README.md) - 项目整体介绍
 - [前端 README](../frontend/README.md) - 前端项目文档
 - [部署指南](../docs/DEPLOYMENT.md) - 详细部署说明
+- [踩坑文档](./docs/troubleshooting/README.md) - 开发过程中遇到的问题及解决方案
 
 ## 📄 License
 

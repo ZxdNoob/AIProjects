@@ -473,6 +473,7 @@ SPA 应用需要配置服务器将所有路由指向 `index.html`，参考上面
 - [项目根目录 README](../README.md) - 项目整体介绍
 - [后端 README](../backend/README.md) - 后端 API 文档
 - [部署指南](../docs/DEPLOYMENT.md) - 详细部署说明
+- [踩坑文档](./docs/troubleshooting/README.md) - 开发过程中遇到的问题及解决方案
 
 ## 📄 License
 

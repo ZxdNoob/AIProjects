@@ -1,6 +1,6 @@
 {
   "name": "frontend-prep-hub-backend",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "前端面试备战平台后端服务",
   "main": "dist/index.js",
   "scripts": {
