@@ -421,6 +421,73 @@ FrontendPrepHub/
 3. 主版本号和次版本号更新时，修订号应重置为 0（如：`1.2.3` → `2.0.0`）
 4. 修订号更新时，其他部分保持不变（如：`1.2.3` → `1.2.4`）
 
+### Git Tag 规范
+
+**重要**：当版本号更新时，必须同时创建对应的 Git Tag。
+
+#### Tag 命名规则
+
+由于本项目是父仓库 `AIProjects` 的子项目，Tag 需要包含子项目名称，并区分前后端：
+
+| 端 | Tag 格式 | 示例 |
+|-----|---------|------|
+| **前端** | `FrontendPrepHub-frontend-v{version}` | `FrontendPrepHub-frontend-v1.0.1` |
+| **后端** | `FrontendPrepHub-backend-v{version}` | `FrontendPrepHub-backend-v1.0.1` |
+
+#### Tag 创建流程
+
+1. **提交代码后创建 Tag**：在代码提交完成后，为更新的版本创建 Tag
+2. **推送 Tag 到远程**：创建 Tag 后需要推送到远程仓库
+3. **Tag 消息**：Tag 消息应包含版本更新的简要说明
+
+#### Tag 命令示例
+
+```bash
+# 创建前端版本 Tag
+git tag -a FrontendPrepHub-frontend-v1.0.1 -m "🏷️ FrontendPrepHub 前端 v1.0.1: 修复开发环境问题"
+
+# 创建后端版本 Tag
+git tag -a FrontendPrepHub-backend-v1.0.1 -m "🏷️ FrontendPrepHub 后端 v1.0.1: 修复 MongoDB 连接和 TypeScript 编译问题"
+
+# 推送单个 Tag 到远程（在父仓库 AIProjects 中执行）
+git push origin FrontendPrepHub-frontend-v1.0.1
+git push origin FrontendPrepHub-backend-v1.0.1
+
+# 或推送所有 Tag 到远程
+git push origin --tags
+```
+
+#### Tag 管理命令
+
+```bash
+# 查看所有 Tag
+git tag -l
+
+# 查看 FrontendPrepHub 项目的 Tag
+git tag -l "FrontendPrepHub-*"
+
+# 查看特定端的 Tag
+git tag -l "FrontendPrepHub-frontend-*"
+git tag -l "FrontendPrepHub-backend-*"
+
+# 查看 Tag 详细信息
+git show FrontendPrepHub-frontend-v1.0.1
+
+# 删除本地 Tag（如有错误）
+git tag -d FrontendPrepHub-frontend-v1.0.1
+
+# 删除远程 Tag（如有错误）
+git push origin --delete FrontendPrepHub-frontend-v1.0.1
+```
+
+#### 注意事项
+
+1. **版本号更新必须创建 Tag**：每次更新版本号后，必须创建对应的 Git Tag
+2. **前后端分别创建**：如果同时更新前后端版本号，需要分别创建两个 Tag
+3. **Tag 消息规范**：Tag 消息使用 `🏷️ FrontendPrepHub {端} v{版本号}: {简要说明}` 格式
+4. **在父仓库创建 Tag**：由于本项目是 AIProjects 的子项目，Tag 需要在父仓库中创建和推送
+5. **推送 Tag**：创建 Tag 后必须推送到远程仓库，确保版本追溯
+
 ## 文档管理规范
 
 ### 文档更新时间规范
