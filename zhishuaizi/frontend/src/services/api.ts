@@ -7,8 +7,23 @@
 // 配置
 // ============================================================
 
+// 请求超时时间（毫秒）
+const REQUEST_TIMEOUT = 5000;
+
 // 后端服务地址
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+// 本地开发使用 Vite 代理 /api，生产环境使用完整 URL
+const getApiBaseUrl = (): string => {
+  // GitHub Pages 环境
+  if (window.location.hostname.includes('github.io')) {
+    return ''; // Mock 模式不需要
+  }
+  // 本地开发环境，使用 Vite 代理
+  if (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') {
+    return ''; // 使用相对路径，由 Vite 代理
+  }
+  // 生产环境，使用环境变量或默认值
+  return import.meta.env.VITE_API_URL || '';
+};
 
 // Mock 模式状态
 let isMockMode: boolean | null = null;
@@ -34,8 +49,8 @@ const mockHistory: { id: number; point: number; created_at: string }[] = [];
 const mockVersionHistory = [
   {
     id: 1,
-    version: '1.8.2',
-    description: '支持 GitHub Pages Mock 模式',
+    version: '1.9.0',
+    description: 'Mock 模式与 GitHub Pages 部署支持',
     change_type: 'minor',
     created_at: new Date().toISOString(),
   },
@@ -87,6 +102,41 @@ const mockRoadmap = [
 ];
 
 // ============================================================
+// 带超时的 fetch 封装
+// ============================================================
+
+interface FetchOptions extends RequestInit {
+  timeout?: number;
+}
+
+/**
+ * 带超时的 fetch 请求
+ */
+async function fetchWithTimeout(url: string, options: FetchOptions = {}): Promise<Response> {
+  const { timeout = REQUEST_TIMEOUT, ...fetchOptions } = options;
+  
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => {
+    controller.abort();
+  }, timeout);
+  
+  try {
+    const response = await fetch(url, {
+      ...fetchOptions,
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+    return response;
+  } catch (error: any) {
+    clearTimeout(timeoutId);
+    if (error.name === 'AbortError') {
+      throw new Error(`请求超时 (${timeout}ms)`);
+    }
+    throw error;
+  }
+}
+
+// ============================================================
 // 后端可用性检测
 // ============================================================
 
@@ -104,15 +154,10 @@ async function checkBackendAvailability(): Promise<boolean> {
   }
   
   try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2000);
-    
-    const response = await fetch(`${API_BASE_URL}/api/stats`, {
+    const response = await fetchWithTimeout(`${getApiBaseUrl()}/api/health`, {
       method: 'GET',
-      signal: controller.signal,
+      timeout: 2000, // 健康检查使用较短超时
     });
-    
-    clearTimeout(timeoutId);
     return response.ok;
   } catch {
     return false;
@@ -120,7 +165,7 @@ async function checkBackendAvailability(): Promise<boolean> {
 }
 
 // 初始化时检测后端可用性
-async function initApiMode() {
+async function initApiMode(): Promise<boolean> {
   if (isMockMode === null) {
     const isAvailable = await checkBackendAvailability();
     isMockMode = !isAvailable;
@@ -182,8 +227,23 @@ export async function rollDice(): Promise<{ point: number }> {
     return { point };
   }
   
-  const response = await fetch(`${API_BASE_URL}/api/roll`, { method: 'POST' });
-  return response.json();
+  try {
+    const response = await fetchWithTimeout(`${getApiBaseUrl()}/api/roll`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return response.json();
+  } catch (error: any) {
+    console.error('掷骰子请求失败:', error.message);
+    // 请求失败时 fallback 到 Mock
+    isMockMode = true;
+    return rollDice();
+  }
 }
 
 /**
@@ -203,8 +263,19 @@ export async function getStats(): Promise<{ stats: typeof mockStats }> {
     return { stats };
   }
   
-  const response = await fetch(`${API_BASE_URL}/api/stats`);
-  return response.json();
+  try {
+    const response = await fetchWithTimeout(`${getApiBaseUrl()}/api/stats`);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return response.json();
+  } catch (error: any) {
+    console.error('获取统计数据失败:', error.message);
+    isMockMode = true;
+    return getStats();
+  }
 }
 
 /**
@@ -218,8 +289,19 @@ export async function getHistory(): Promise<{ history: typeof mockHistory }> {
     return { history: mockHistory };
   }
   
-  const response = await fetch(`${API_BASE_URL}/api/history`);
-  return response.json();
+  try {
+    const response = await fetchWithTimeout(`${getApiBaseUrl()}/api/history`);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return response.json();
+  } catch (error: any) {
+    console.error('获取历史记录失败:', error.message);
+    isMockMode = true;
+    return getHistory();
+  }
 }
 
 /**
@@ -233,8 +315,19 @@ export async function getVersionHistory(): Promise<{ history: typeof mockVersion
     return { history: mockVersionHistory };
   }
   
-  const response = await fetch(`${API_BASE_URL}/api/version-history`);
-  return response.json();
+  try {
+    const response = await fetchWithTimeout(`${getApiBaseUrl()}/api/version-history`);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return response.json();
+  } catch (error: any) {
+    console.error('获取版本历史失败:', error.message);
+    isMockMode = true;
+    return getVersionHistory();
+  }
 }
 
 /**
@@ -260,12 +353,22 @@ export async function addVersionHistory(data: {
     return { success: true, id: newItem.id };
   }
   
-  const response = await fetch(`${API_BASE_URL}/api/version-history`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
-  return response.json();
+  try {
+    const response = await fetchWithTimeout(`${getApiBaseUrl()}/api/version-history`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return response.json();
+  } catch (error: any) {
+    console.error('添加版本历史失败:', error.message);
+    return { success: false };
+  }
 }
 
 /**
@@ -279,8 +382,19 @@ export async function getRoadmap(): Promise<{ items: typeof mockRoadmap }> {
     return { items: mockRoadmap };
   }
   
-  const response = await fetch(`${API_BASE_URL}/api/roadmap`);
-  return response.json();
+  try {
+    const response = await fetchWithTimeout(`${getApiBaseUrl()}/api/roadmap`);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return response.json();
+  } catch (error: any) {
+    console.error('获取路线图失败:', error.message);
+    isMockMode = true;
+    return getRoadmap();
+  }
 }
 
 /**
@@ -311,12 +425,22 @@ export async function addRoadmapItem(data: {
     return { success: true, id: newItem.id };
   }
   
-  const response = await fetch(`${API_BASE_URL}/api/roadmap`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
-  return response.json();
+  try {
+    const response = await fetchWithTimeout(`${getApiBaseUrl()}/api/roadmap`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return response.json();
+  } catch (error: any) {
+    console.error('添加路线图项目失败:', error.message);
+    return { success: false };
+  }
 }
 
 /**
@@ -352,12 +476,22 @@ export async function updateRoadmapItem(
     return { success: true };
   }
   
-  const response = await fetch(`${API_BASE_URL}/api/roadmap/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
-  return response.json();
+  try {
+    const response = await fetchWithTimeout(`${getApiBaseUrl()}/api/roadmap/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return response.json();
+  } catch (error: any) {
+    console.error('更新路线图项目失败:', error.message);
+    return { success: false };
+  }
 }
 
 /**
@@ -375,10 +509,20 @@ export async function deleteRoadmapItem(id: number): Promise<{ success: boolean 
     return { success: true };
   }
   
-  const response = await fetch(`${API_BASE_URL}/api/roadmap/${id}`, {
-    method: 'DELETE',
-  });
-  return response.json();
+  try {
+    const response = await fetchWithTimeout(`${getApiBaseUrl()}/api/roadmap/${id}`, {
+      method: 'DELETE',
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return response.json();
+  } catch (error: any) {
+    console.error('删除路线图项目失败:', error.message);
+    return { success: false };
+  }
 }
 
 // ============================================================
@@ -409,3 +553,9 @@ export function setMockMode(enabled: boolean): void {
   isMockMode = enabled;
 }
 
+/**
+ * 重置 API 模式（强制重新检测）
+ */
+export function resetApiMode(): void {
+  isMockMode = null;
+}
