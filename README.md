@@ -4,6 +4,26 @@
 
 ## 📦 子项目列表
 
+### 📚 [FrontendPrepHub - 前端面试备战平台](./FrontendPrepHub/)
+
+一个功能完善的全栈前端面试备战平台，具备「用户角色权限 + 知识学习 + 在线编码调试 + 算法动画可视化」核心能力。
+
+**技术栈：**
+- **前端**: React 18 + TypeScript + Monaco Editor + Zustand + Tailwind CSS
+- **后端**: Express.js + TypeScript + MongoDB + JWT
+
+**主要特性：**
+- 🔐 多角色用户系统（普通用户/会员/管理员）
+- 📖 分级知识模块（80+ 高频面试考点）
+- 💻 在线编码调试（Monaco Editor 多文件编辑）
+- 🎬 算法动画可视化（30道算法动画演示）
+- 📊 个人学习管理（进度跟踪、错题收集）
+- ⚙️ 管理员后台（用户管理、内容管理、数据统计）
+
+详见：[FrontendPrepHub/README.md](./FrontendPrepHub/README.md)
+
+---
+
 ### 🎲 [一起掷骰子](./zhishuaizi/)
 
 一个现代化的在线掷骰子应用，具有精美的 3D 动画效果和统计功能。
