@@ -10,6 +10,29 @@
 
 ---
 
+### v1.9.0 (2025-12-28)
+**✨ Mock 模式与 GitHub Pages 部署支持**
+- **统一 API 服务层**
+  - 创建 `services/api.ts` 统一管理所有 API 请求
+  - 实现智能后端检测，自动判断后端服务可用性
+  - 支持 Mock 模式，后端不可用时自动切换到模拟数据
+  - Mock 数据包括：掷骰子、统计、历史记录、版本历史、路线图
+- **GitHub Pages 部署**
+  - 支持 GitHub Pages 静态部署
+  - 自动检测 GitHub Pages 环境并启用 Mock 模式
+  - 配置 Vite 动态 base 路径，支持子目录部署
+  - 配置 BrowserRouter basename，正确处理路由
+- **后端健康检查**
+  - 新增 `/api/health` 健康检查端点
+  - 支持 Render 等云服务的健康检查配置
+- **Render 部署配置**
+  - 添加 Blueprint 配置支持一键部署
+  - 配置 SQLite 持久化磁盘存储
+- **代码重构**
+  - 所有页面（DicePage、StatsPage、VersionHistoryPage、RoadmapPage）使用新的 API 服务
+  - 移除硬编码的 `localhost:3001` 地址
+  - 统一错误处理和加载状态管理
+
 ### v1.8.2 (2025-11-26)
 **🐛 版本历史数据库独立与优化**
 - **版本历史数据库独立**
