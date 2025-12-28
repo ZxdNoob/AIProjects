@@ -47,3 +47,12 @@ uploads/
 .cache/
 .temp/
 
+# Vite cache
+.vite/
+
+# Package lock (由每个开发者本地生成)
+package-lock.json
+
+# MongoDB local
+mongod-x64-darwin*
+
