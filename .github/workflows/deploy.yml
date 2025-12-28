@@ -33,15 +33,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: |
-            FrontendPrepHub/frontend/package-lock.json
-            zhishuaizi/frontend/package-lock.json
 
       # ==================== 构建 FrontendPrepHub ====================
       - name: Install FrontendPrepHub dependencies
         working-directory: FrontendPrepHub/frontend
-        run: npm ci || npm install
+        run: npm install
 
       - name: Build FrontendPrepHub
         working-directory: FrontendPrepHub/frontend
@@ -52,7 +48,7 @@ jobs:
       # ==================== 构建 zhishuaizi ====================
       - name: Install zhishuaizi dependencies
         working-directory: zhishuaizi/frontend
-        run: npm ci || npm install
+        run: npm install
 
       - name: Build zhishuaizi
         working-directory: zhishuaizi/frontend
@@ -72,8 +68,14 @@ jobs:
           mkdir -p ./dist/zhishuaizi
           cp -r ./FrontendPrepHub/frontend/dist/* ./dist/FrontendPrepHub/
           cp -r ./zhishuaizi/frontend/dist/* ./dist/zhishuaizi/
+          # 为 SPA 路由创建 404.html（复制 index.html）
+          cp ./dist/FrontendPrepHub/index.html ./dist/FrontendPrepHub/404.html
+          cp ./dist/zhishuaizi/index.html ./dist/zhishuaizi/404.html
           # 创建 .nojekyll 文件禁用 Jekyll 处理
           touch ./dist/.nojekyll
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -91,4 +93,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-

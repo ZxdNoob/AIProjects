@@ -5,6 +5,9 @@ import {
   Route,
   useNavigate,
 } from "react-router-dom";
+
+// 获取路由基础路径，支持 GitHub Pages 子目录部署
+const basename = import.meta.env.BASE_URL || '/';
 import { Button, Card, Typography, Space, ConfigProvider, Carousel } from "antd";
 import zhCN from "antd/locale/zh_CN";
 import { 
@@ -164,7 +167,7 @@ function HomeNav() {
 function App() {
   return (
     <ConfigProvider locale={zhCN}>
-      <Router>
+      <Router basename={basename}>
         <Routes>
           <Route path="/" element={<HomeNav />} />
           <Route path="/dice" element={<DicePage />} />

@@ -15,6 +15,12 @@ import App from './App';
 import './styles/index.css';
 
 /**
+ * 获取路由基础路径
+ * 本地开发时使用 '/'，GitHub Pages 部署时使用 '/AIProjects/FrontendPrepHub/'
+ */
+const basename = import.meta.env.BASE_URL || '/';
+
+/**
  * 创建 React 根节点并渲染应用
  * 
  * document.getElementById('root')! - 获取 HTML 中 id 为 'root' 的元素作为挂载点
@@ -28,12 +34,13 @@ import './styles/index.css';
  * BrowserRouter - 使用 HTML5 history API 实现客户端路由
  *   - 支持前端页面跳转而不刷新页面
  *   - 使 URL 看起来像传统的多页面应用
+ *   - basename 设置为 Vite 的 base 路径，确保子目录部署正常工作
  */
 ReactDOM.createRoot(document.getElementById('root')!).render(
   // 启用严格模式，帮助发现潜在问题
   <React.StrictMode>
-    {/* 包装 BrowserRouter 提供路由功能 */}
-    <BrowserRouter>
+    {/* 包装 BrowserRouter 提供路由功能，设置 basename 支持子目录部署 */}
+    <BrowserRouter basename={basename}>
       {/* 渲染应用根组件 */}
       <App />
     </BrowserRouter>
