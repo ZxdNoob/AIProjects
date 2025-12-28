@@ -6,6 +6,7 @@ import Dice3D from './components/Dice3D';
 import DiceReadyIcon from './components/DiceReadyIcon';
 import DiceLogo from '../../components/DiceLogo';
 import HomeButton from '../../components/HomeButton';
+import { rollDice as apiRollDice } from '../../services/api';
 import './components/Dice3D.less';
 import './DicePage.less';
 
@@ -33,16 +34,21 @@ export default function DicePage() {
 
     // 获取最终结果
     setTimeout(async () => {
-      const res = await fetch('http://localhost:3001/api/roll', { method: 'POST' });
-      const data = await res.json();
-      setResult(data.point);
-      setRolling(false);
-      
-      // 继续数字动画直到骰子完全停止
-      setTimeout(() => {
+      try {
+        const data = await apiRollDice();
+        setResult(data.point);
+        setRolling(false);
+        
+        // 继续数字动画直到骰子完全停止
+        setTimeout(() => {
+          clearInterval(rollingTimer);
+          setDisplayNumber(data.point);
+        }, 800); // 骰子CSS过渡时间 0.8s = 800ms
+      } catch (error) {
+        console.error('掷骰子失败:', error);
+        setRolling(false);
         clearInterval(rollingTimer);
-        setDisplayNumber(data.point);
-      }, 800); // 骰子CSS过渡时间 0.8s = 800ms
+      }
     }, 800);
   };
 

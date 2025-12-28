@@ -6,6 +6,7 @@ import ReactECharts from 'echarts-for-react';
 import type { EChartsOption } from 'echarts';
 import DiceLogo from '../../components/DiceLogo';
 import HomeButton from '../../components/HomeButton';
+import { getStats, getHistory } from '../../services/api';
 import './StatsPage.less';
 
 const { Title } = Typography;
@@ -22,50 +23,31 @@ export default function StatsPage() {
   const [error, setError] = React.useState<string | null>(null);
   const navigate = useNavigate();
 
-  const loadData = React.useCallback(() => {
+  const loadData = React.useCallback(async () => {
     setLoading(true);
     setError(null);
     
-    // 获取统计数据
-    fetch('http://localhost:3001/api/stats')
-      .then(res => {
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-        return res.json();
-      })
-      .then(data => {
-        console.log('统计数据:', data);
-        setStats(data.stats || []);
-      })
-      .catch(err => {
-        console.error('获取统计数据失败:', err);
-        setError(`获取统计数据失败: ${err.message}`);
-      });
-    
-    // 获取历史记录
-    fetch('http://localhost:3001/api/history')
-      .then(res => {
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-        return res.json();
-      })
-      .then(data => {
-        console.log('历史记录API响应:', data);
-        const historyData = Array.isArray(data.history) ? data.history : [];
-        console.log('历史记录数量:', historyData.length);
-        if (historyData.length > 0) {
-          console.log('第一条历史记录:', historyData[0]);
-        }
-        setHistory(historyData);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error('获取历史记录失败:', err);
-        setError(`获取历史记录失败: ${err.message}`);
-        setLoading(false);
-      });
+    try {
+      // 获取统计数据
+      const statsData = await getStats();
+      console.log('统计数据:', statsData);
+      setStats(statsData.stats || []);
+      
+      // 获取历史记录
+      const historyData = await getHistory();
+      console.log('历史记录API响应:', historyData);
+      const historyList = Array.isArray(historyData.history) ? historyData.history : [];
+      console.log('历史记录数量:', historyList.length);
+      if (historyList.length > 0) {
+        console.log('第一条历史记录:', historyList[0]);
+      }
+      setHistory(historyList);
+    } catch (err: any) {
+      console.error('获取数据失败:', err);
+      setError(`获取数据失败: ${err.message || '未知错误'}`);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   React.useEffect(() => {

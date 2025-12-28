@@ -1,0 +1,46 @@
+# Render Blueprint - 后端服务部署配置
+# 文档: https://render.com/docs/blueprint-spec
+
+services:
+  # ==================== FrontendPrepHub 后端 ====================
+  - type: web
+    name: frontendprephub-api
+    runtime: node
+    region: singapore  # 新加坡区域，延迟较低
+    plan: free  # 免费计划
+    rootDir: FrontendPrepHub/backend
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+      - key: JWT_SECRET
+        generateValue: true  # 自动生成随机密钥
+      - key: MONGODB_URI
+        sync: false  # 需要手动设置 MongoDB Atlas 连接字符串
+    healthCheckPath: /api/health
+    autoDeploy: true  # 推送时自动部署
+
+  # ==================== zhishuaizi 后端 ====================
+  - type: web
+    name: zhishuaizi-api
+    runtime: node
+    region: singapore
+    plan: free
+    rootDir: zhishuaizi/backend
+    buildCommand: npm install
+    startCommand: node index.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+    healthCheckPath: /api/stats
+    autoDeploy: true
+    disk:
+      name: zhishuaizi-data
+      mountPath: /data
+      sizeGB: 1  # 用于 SQLite 数据持久化
+

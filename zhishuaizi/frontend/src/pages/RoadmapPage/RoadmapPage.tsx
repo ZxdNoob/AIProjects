@@ -33,6 +33,12 @@ import dayjs from 'dayjs';
 import DiceLogo from '../../components/DiceLogo';
 import HomeButton from '../../components/HomeButton';
 import EllipsisTooltip from '../../components/EllipsisTooltip';
+import {
+  getRoadmap,
+  addRoadmapItem,
+  updateRoadmapItem,
+  deleteRoadmapItem as apiDeleteRoadmapItem,
+} from '../../services/api';
 import './RoadmapPage.less';
 
 const { Title, Text } = Typography;
@@ -72,27 +78,20 @@ export default function RoadmapPage() {
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
-  const loadData = useCallback(() => {
+  const loadData = useCallback(async () => {
     setLoading(true);
     setError(null);
 
-    fetch('http://localhost:3001/api/roadmap')
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-        return res.json();
-      })
-      .then((data) => {
-        console.log('路线图需求数据:', data);
-        setItems(data.items || []);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('获取路线图需求失败:', err);
-        setError(`获取路线图需求失败: ${err.message}`);
-        setLoading(false);
-      });
+    try {
+      const data = await getRoadmap();
+      console.log('路线图需求数据:', data);
+      setItems(data.items || []);
+    } catch (err: any) {
+      console.error('获取路线图需求失败:', err);
+      setError(`获取路线图需求失败: ${err.message || '未知错误'}`);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -119,12 +118,9 @@ export default function RoadmapPage() {
 
   const handleDelete = async (id: number) => {
     try {
-      const res = await fetch(`http://localhost:3001/api/roadmap/${id}`, {
-        method: 'DELETE',
-      });
-      const data = await res.json();
-      if (data.error) {
-        message.error(data.error);
+      const data = await apiDeleteRoadmapItem(id);
+      if (!data.success) {
+        message.error('删除失败');
         return;
       }
       message.success('删除成功');
@@ -143,26 +139,19 @@ export default function RoadmapPage() {
         description: values.description || '',
         status: values.status || 'planned',
         priority: values.priority || 'medium',
-        targetDate: values.targetDate ? values.targetDate.format('YYYY-MM-DD HH:mm:ss') : null,
+        targetDate: values.targetDate ? values.targetDate.format('YYYY-MM-DD HH:mm:ss') : undefined,
         sortOrder: 0,
       };
 
-      const url = editingItem
-        ? `http://localhost:3001/api/roadmap/${editingItem.id}`
-        : 'http://localhost:3001/api/roadmap';
-      const method = editingItem ? 'PUT' : 'POST';
+      let data;
+      if (editingItem) {
+        data = await updateRoadmapItem(editingItem.id, payload);
+      } else {
+        data = await addRoadmapItem(payload);
+      }
 
-      const res = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await res.json();
-      if (data.error) {
-        message.error(data.error);
+      if (!data.success) {
+        message.error('操作失败');
         return;
       }
 

@@ -4,6 +4,7 @@ import { RollbackOutlined, ReloadOutlined, CalendarOutlined, UnorderedListOutlin
 import { useNavigate } from 'react-router-dom';
 import DiceLogo from '../../components/DiceLogo';
 import HomeButton from '../../components/HomeButton';
+import { getVersionHistory } from '../../services/api';
 import './VersionHistoryPage.less';
 
 const { Title, Text } = Typography;
@@ -28,27 +29,20 @@ export default function VersionHistoryPage() {
   const [activeKeys, setActiveKeys] = React.useState<React.Key[]>([]);
   const navigate = useNavigate();
 
-  const loadData = React.useCallback(() => {
+  const loadData = React.useCallback(async () => {
     setLoading(true);
     setError(null);
     
-    fetch('http://localhost:3001/api/version-history')
-      .then(res => {
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-        return res.json();
-      })
-      .then(data => {
-        console.log('版本历史数据:', data);
-        setHistory(data.history || []);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error('获取版本历史失败:', err);
-        setError(`获取版本历史失败: ${err.message}`);
-        setLoading(false);
-      });
+    try {
+      const data = await getVersionHistory();
+      console.log('版本历史数据:', data);
+      setHistory(data.history || []);
+    } catch (err: any) {
+      console.error('获取版本历史失败:', err);
+      setError(`获取版本历史失败: ${err.message || '未知错误'}`);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   // 当数据或每页条数变化时，检查当前页是否有效

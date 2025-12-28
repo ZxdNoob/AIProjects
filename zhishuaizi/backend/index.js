@@ -64,6 +64,11 @@ function weightedRandomDice() {
   return 3;
 }
 
+// 健康检查接口
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 // 掷骰子接口
 app.post('/api/roll', (req, res) => {
   const point = weightedRandomDice();
