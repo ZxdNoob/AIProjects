@@ -34,6 +34,10 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+        continue-on-error: true
+
       # ==================== 构建 FrontendPrepHub ====================
       - name: Install FrontendPrepHub dependencies
         working-directory: FrontendPrepHub/frontend
@@ -73,9 +77,6 @@ jobs:
           cp ./dist/zhishuaizi/index.html ./dist/zhishuaizi/404.html
           # 创建 .nojekyll 文件禁用 Jekyll 处理
           touch ./dist/.nojekyll
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
