@@ -2,6 +2,15 @@
 
 这是一个包含多个 AI 相关项目的集合仓库。
 
+## 🌐 在线预览
+
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-在线预览-blue?style=for-the-badge&logo=github)](https://zxdnoob.github.io/AIProjects/)
+
+| 项目 | 预览地址 |
+|------|----------|
+| 📚 FrontendPrepHub | [https://zxdnoob.github.io/AIProjects/FrontendPrepHub/](https://zxdnoob.github.io/AIProjects/FrontendPrepHub/) |
+| 🎲 一起掷骰子 | [https://zxdnoob.github.io/AIProjects/zhishuaizi/](https://zxdnoob.github.io/AIProjects/zhishuaizi/) |
+
 ## 📦 子项目列表
 
 ### 📚 [FrontendPrepHub - 前端面试备战平台](./FrontendPrepHub/)
@@ -36,6 +45,34 @@
 - 产品路线图
 
 详见：[zhishuaizi/README.md](./zhishuaizi/README.md)
+
+---
+
+## 🚀 GitHub Pages 部署
+
+本项目使用 **GitHub Actions** 自动部署到 **GitHub Pages**。
+
+### 部署架构
+
+```
+https://zxdnoob.github.io/AIProjects/
+├── index.html              # 项目导航主页
+├── FrontendPrepHub/        # 前端面试备战平台
+└── zhishuaizi/             # 一起掷骰子应用
+```
+
+### 自动部署流程
+
+1. 推送代码到 `master` 分支
+2. GitHub Actions 自动触发构建
+3. 分别构建各子项目的前端应用
+4. 自动部署到 GitHub Pages
+
+### 首次启用 GitHub Pages
+
+1. 进入仓库 Settings → Pages
+2. Source 选择 "GitHub Actions"
+3. 推送代码触发首次部署
 
 ---
 

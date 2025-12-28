@@ -16,6 +16,13 @@ import path from 'path';
  * 使用 defineConfig 可以获得更好的类型提示
  */
 export default defineConfig({
+  // ==================== 基础路径配置 ====================
+  /**
+   * 部署基础路径
+   * 本地开发时使用 '/'，GitHub Pages 部署时使用环境变量 VITE_BASE_PATH
+   * 这样可以支持子目录部署
+   */
+  base: process.env.VITE_BASE_PATH || '/',
   // ==================== 插件配置 ====================
   /**
    * 使用的 Vite 插件列表
