@@ -353,3 +353,188 @@
 .monaco-editor .margin {
   @apply bg-dark-900 !important;  /* 深色背景，使用 !important 覆盖默认样式 */
 }
+
+/* ============================================================
+   IDE 专用样式
+   ============================================================ */
+
+/* IDE 容器背景 */
+.bg-dark-850 {
+  background-color: #0d0d1a;
+}
+
+/* IDE 文件树节点悬停效果 */
+.file-tree-node:hover {
+  @apply bg-dark-700/50;
+}
+
+/* IDE 文件树选中效果 */
+.file-tree-node.selected {
+  @apply bg-primary-500/20 text-primary-300;
+}
+
+/* IDE 编辑器标签页动画 */
+.editor-tab {
+  @apply transition-all duration-150;
+}
+
+.editor-tab:hover {
+  @apply bg-dark-800/50;
+}
+
+.editor-tab.active {
+  @apply bg-dark-800 border-b-2 border-primary-500;
+}
+
+/* IDE 终端样式 */
+.terminal-output {
+  font-family: 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+/* IDE 预览设备边框 */
+.device-frame {
+  @apply border-[14px] border-dark-700 rounded-[40px];
+  box-shadow: 
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+    0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+/* IDE 预览设备凹槽 */
+.device-notch {
+  @apply absolute top-1 left-1/2 -translate-x-1/2 w-20 h-6 bg-dark-700 rounded-b-xl;
+}
+
+/* IDE 侧边栏过渡 */
+.ide-sidebar {
+  @apply transition-all duration-200 ease-in-out;
+}
+
+/* IDE 分割线拖拽效果 */
+.resizer {
+  @apply transition-colors duration-150;
+}
+
+.resizer:hover {
+  @apply bg-primary-500/50;
+}
+
+.resizer.dragging {
+  @apply bg-primary-500;
+}
+
+/* IDE 工具栏按钮 */
+.toolbar-btn {
+  @apply flex items-center space-x-1.5 px-3 py-1.5 rounded-md 
+         text-dark-300 hover:text-white hover:bg-dark-700 
+         transition-all duration-150;
+}
+
+.toolbar-btn.active {
+  @apply text-primary-400 bg-primary-500/10;
+}
+
+/* IDE 下拉菜单 */
+.dropdown-menu {
+  @apply absolute right-0 top-full mt-1 bg-dark-800 
+         border border-dark-600 rounded-lg shadow-xl z-50 py-1 
+         min-w-[160px] overflow-hidden;
+}
+
+.dropdown-item {
+  @apply w-full px-3 py-2 text-sm text-left text-dark-300 
+         hover:bg-dark-700 hover:text-white transition-colors;
+}
+
+.dropdown-item.active {
+  @apply bg-primary-500/20 text-primary-300;
+}
+
+/* IDE 快捷键提示 */
+kbd {
+  @apply px-1.5 py-0.5 bg-dark-700 rounded text-dark-300 font-mono text-xs;
+}
+
+/* IDE 通知样式 */
+.notification {
+  @apply fixed top-4 right-4 px-4 py-3 rounded-xl font-medium 
+         z-50 shadow-lg animate-slide-in;
+}
+
+.notification.success {
+  @apply bg-gradient-to-r from-green-600 to-emerald-600 text-white;
+}
+
+.notification.error {
+  @apply bg-gradient-to-r from-red-600 to-rose-600 text-white;
+}
+
+.notification.info {
+  @apply bg-gradient-to-r from-blue-600 to-cyan-600 text-white;
+}
+
+.notification.warning {
+  @apply bg-gradient-to-r from-yellow-600 to-amber-600 text-white;
+}
+
+/* 滑入动画 */
+@keyframes slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out;
+}
+
+/* 滑出动画 */
+@keyframes slide-out {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.animate-slide-out {
+  animation: slide-out 0.3s ease-out forwards;
+}
+
+/* IDE 模态框遮罩 */
+.modal-overlay {
+  @apply fixed inset-0 z-50 bg-black/70 backdrop-blur-sm 
+         flex items-center justify-center;
+}
+
+/* IDE 模态框内容 */
+.modal-content {
+  @apply relative bg-dark-900 border border-dark-700 rounded-2xl 
+         shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto;
+}
+
+/* IDE 代码高亮主题增强 */
+.monaco-editor .mtk1 { color: #d4d4d4; }
+.monaco-editor .mtk3 { color: #6a9955; }
+.monaco-editor .mtk4 { color: #569cd6; }
+.monaco-editor .mtk5 { color: #9cdcfe; }
+.monaco-editor .mtk6 { color: #b5cea8; }
+.monaco-editor .mtk7 { color: #ce9178; }
+.monaco-editor .mtk8 { color: #c586c0; }
+.monaco-editor .mtk9 { color: #4ec9b0; }
+.monaco-editor .mtk10 { color: #dcdcaa; }
+
+/* IDE 控制台消息类型样式 */
+.console-log { @apply text-dark-300; }
+.console-info { @apply text-blue-400 bg-blue-500/5; }
+.console-warn { @apply text-yellow-400 bg-yellow-500/5; }
+.console-error { @apply text-red-400 bg-red-500/5; }
+.console-success { @apply text-green-400 bg-green-500/5; }
+.console-system { @apply text-purple-400 bg-purple-500/5; }
