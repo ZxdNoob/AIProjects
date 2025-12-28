@@ -223,30 +223,91 @@ FrontendPrepHub/
 
 ### 代码推送规范
 
-**重要**：本项目使用 `git subtree` 方式管理，推送代码时必须遵循以下规则：
+**重要**：本项目推送到远程仓库时，必须通过父仓库目录进行操作，严禁直接从本项目目录推送！
 
-1. **推送到子目录**：推送时必须使用 `git subtree push` 命令，确保只更新远程仓库中的 `FrontendPrepHub` 目录
-2. **禁止直接推送**：禁止使用 `git push upstream master` 直接推送，这会覆盖父仓库中的其他子项目
-3. **推送命令格式**：
-   ```bash
-   # 正确的推送方式（从项目根目录执行）
-   git subtree push --prefix=. upstream master
-   
-   # 或者先在本地提交，然后推送到父仓库的 FrontendPrepHub 目录
-   git push upstream `git subtree split --prefix=.`:refs/heads/master
-   ```
+#### 本地目录结构
 
-4. **拉取更新**：
-   ```bash
-   # 从父仓库拉取 FrontendPrepHub 目录的更新
-   git subtree pull --prefix=. upstream master --squash
-   ```
+| 目录 | 说明 |
+|------|------|
+| `/Users/zxdgoing/Study Space/FrontendPrepHub` | 本项目开发目录（日常开发在此进行） |
+| `/Users/zxdgoing/GitHub/AIProjects` | 父仓库本地克隆目录（推送到远程时使用） |
+| `/Users/zxdgoing/GitHub/AIProjects/FrontendPrepHub` | 父仓库中的子项目目录（同步目标） |
+
+#### 推送流程（必须严格遵循）
+
+**第一步：同步文件到父仓库目录**
+```bash
+# 使用 rsync 同步，排除 .git、node_modules 等目录
+rsync -av --delete \
+  --exclude='.git' \
+  --exclude='node_modules' \
+  --exclude='.DS_Store' \
+  "/Users/zxdgoing/Study Space/FrontendPrepHub/" \
+  "/Users/zxdgoing/GitHub/AIProjects/FrontendPrepHub/"
+```
+
+**第二步：在父仓库目录提交和推送**
+```bash
+# 切换到父仓库目录
+cd /Users/zxdgoing/GitHub/AIProjects
+
+# 检查变更状态
+git status
+
+# 添加 FrontendPrepHub 子目录的变更（注意：只添加子目录！）
+git add FrontendPrepHub/
+
+# 提交（使用规范的提交信息格式）
+git commit -m "✨ feat(FrontendPrepHub): 提交说明"
+
+# 拉取远程更新并变基（避免冲突）
+git pull origin master --rebase
+
+# 推送到远程
+git push origin master
+```
+
+**第三步：创建 Tag（如果更新了版本号）**
+```bash
+# 在父仓库目录创建 Tag
+git tag -a FrontendPrepHub-frontend-v1.x.x -m "🏷️ FrontendPrepHub 前端 vx.x.x: 版本说明"
+git push origin FrontendPrepHub-frontend-v1.x.x
+```
+
+#### 严禁操作（会导致错误）
+
+1. ❌ **禁止从本项目目录直接推送**：本项目目录 `/Users/zxdgoing/Study Space/FrontendPrepHub` 不能直接推送到远程
+2. ❌ **禁止将文件同步到父仓库根目录**：同步时目标必须是 `AIProjects/FrontendPrepHub/`，而非 `AIProjects/`
+3. ❌ **禁止使用 `git add .` 或 `git add -A`**：在父仓库中只能添加 `FrontendPrepHub/` 子目录的变更
+4. ❌ **禁止覆盖其他子项目**：父仓库包含多个子项目（如 `zhishuaizi`），推送时务必只影响 `FrontendPrepHub` 目录
+
+#### 正确操作示例
+
+```bash
+# ✅ 正确：同步到子目录
+rsync -av --delete --exclude='.git' --exclude='node_modules' --exclude='.DS_Store' \
+  "/Users/zxdgoing/Study Space/FrontendPrepHub/" \
+  "/Users/zxdgoing/GitHub/AIProjects/FrontendPrepHub/"
+
+# ✅ 正确：只添加子目录
+cd /Users/zxdgoing/GitHub/AIProjects
+git add FrontendPrepHub/
+
+# ❌ 错误：同步到根目录（会覆盖其他项目！）
+rsync ... "/Users/zxdgoing/GitHub/AIProjects/"
+
+# ❌ 错误：添加所有文件（可能包含不该提交的内容）
+git add .
+git add -A
+```
 
 ### 推送注意事项
 
-1. **确认远程仓库状态**：推送前先检查远程仓库 https://github.com/ZxdNoob/AIProjects 的当前状态
-2. **避免覆盖其他项目**：父仓库包含多个子项目（如 `zhishuaizi` 等），推送时务必只影响 `FrontendPrepHub` 目录
-3. **合并冲突处理**：如遇到冲突，应先拉取远程更新并在本地解决冲突后再推送
+1. **确认同步目标**：同步前务必确认目标是 `AIProjects/FrontendPrepHub/`，而非 `AIProjects/`
+2. **检查变更范围**：提交前使用 `git status` 确认只有 `FrontendPrepHub/` 下的文件被修改
+3. **避免覆盖其他项目**：父仓库包含多个子项目，推送时务必只影响 `FrontendPrepHub` 目录
+4. **处理远程冲突**：如遇到推送失败，先执行 `git pull origin master --rebase` 再推送
+5. **删除误创建的目录**：如果在父仓库根目录发现 `backend/` 或 `frontend/` 等误创建的目录，立即删除
 
 ### 提交权限规则
 **重要**：AI 助手在没有收到用户明确的代码提交指令时，**禁止自动提交代码**。只有在用户明确要求提交（如"提交代码"、"commit"、"git commit"等）时才能执行提交操作。
