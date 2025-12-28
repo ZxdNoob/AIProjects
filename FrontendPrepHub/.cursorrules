@@ -225,13 +225,32 @@ FrontendPrepHub/
 
 **重要**：本项目推送到远程仓库时，必须通过父仓库目录进行操作，严禁直接从本项目目录推送！
 
+#### 路径配置（使用前必须配置）
+
+由于本项目是开源项目，不同用户的本地目录结构不同，请根据自己的环境配置以下路径变量：
+
+```bash
+# 配置说明：请将以下变量替换为你本地的实际路径
+# 可以将这些变量添加到 ~/.bashrc 或 ~/.zshrc 中
+
+# 本项目开发目录（你克隆或存放 FrontendPrepHub 的位置）
+export PROJECT_DEV_DIR="/path/to/your/FrontendPrepHub"
+
+# 父仓库 AIProjects 本地克隆目录
+export PARENT_REPO_DIR="/path/to/your/AIProjects"
+
+# 示例配置：
+# export PROJECT_DEV_DIR="$HOME/Projects/FrontendPrepHub"
+# export PARENT_REPO_DIR="$HOME/GitHub/AIProjects"
+```
+
 #### 本地目录结构
 
 | 目录 | 说明 |
 |------|------|
-| `/Users/zxdgoing/Study Space/FrontendPrepHub` | 本项目开发目录（日常开发在此进行） |
-| `/Users/zxdgoing/GitHub/AIProjects` | 父仓库本地克隆目录（推送到远程时使用） |
-| `/Users/zxdgoing/GitHub/AIProjects/FrontendPrepHub` | 父仓库中的子项目目录（同步目标） |
+| `$PROJECT_DEV_DIR` | 本项目开发目录（日常开发在此进行） |
+| `$PARENT_REPO_DIR` | 父仓库本地克隆目录（推送到远程时使用） |
+| `$PARENT_REPO_DIR/FrontendPrepHub` | 父仓库中的子项目目录（同步目标） |
 
 #### 推送流程（必须严格遵循）
 
@@ -242,14 +261,14 @@ rsync -av --delete \
   --exclude='.git' \
   --exclude='node_modules' \
   --exclude='.DS_Store' \
-  "/Users/zxdgoing/Study Space/FrontendPrepHub/" \
-  "/Users/zxdgoing/GitHub/AIProjects/FrontendPrepHub/"
+  "$PROJECT_DEV_DIR/" \
+  "$PARENT_REPO_DIR/FrontendPrepHub/"
 ```
 
 **第二步：在父仓库目录提交和推送**
 ```bash
 # 切换到父仓库目录
-cd /Users/zxdgoing/GitHub/AIProjects
+cd "$PARENT_REPO_DIR"
 
 # 检查变更状态
 git status
@@ -276,8 +295,8 @@ git push origin FrontendPrepHub-frontend-v1.x.x
 
 #### 严禁操作（会导致错误）
 
-1. ❌ **禁止从本项目目录直接推送**：本项目目录 `/Users/zxdgoing/Study Space/FrontendPrepHub` 不能直接推送到远程
-2. ❌ **禁止将文件同步到父仓库根目录**：同步时目标必须是 `AIProjects/FrontendPrepHub/`，而非 `AIProjects/`
+1. ❌ **禁止从本项目目录直接推送**：本项目目录 `$PROJECT_DEV_DIR` 不能直接推送到远程
+2. ❌ **禁止将文件同步到父仓库根目录**：同步时目标必须是 `$PARENT_REPO_DIR/FrontendPrepHub/`，而非 `$PARENT_REPO_DIR/`
 3. ❌ **禁止使用 `git add .` 或 `git add -A`**：在父仓库中只能添加 `FrontendPrepHub/` 子目录的变更
 4. ❌ **禁止覆盖其他子项目**：父仓库包含多个子项目（如 `zhishuaizi`），推送时务必只影响 `FrontendPrepHub` 目录
 
@@ -286,15 +305,15 @@ git push origin FrontendPrepHub-frontend-v1.x.x
 ```bash
 # ✅ 正确：同步到子目录
 rsync -av --delete --exclude='.git' --exclude='node_modules' --exclude='.DS_Store' \
-  "/Users/zxdgoing/Study Space/FrontendPrepHub/" \
-  "/Users/zxdgoing/GitHub/AIProjects/FrontendPrepHub/"
+  "$PROJECT_DEV_DIR/" \
+  "$PARENT_REPO_DIR/FrontendPrepHub/"
 
 # ✅ 正确：只添加子目录
-cd /Users/zxdgoing/GitHub/AIProjects
+cd "$PARENT_REPO_DIR"
 git add FrontendPrepHub/
 
 # ❌ 错误：同步到根目录（会覆盖其他项目！）
-rsync ... "/Users/zxdgoing/GitHub/AIProjects/"
+rsync ... "$PARENT_REPO_DIR/"
 
 # ❌ 错误：添加所有文件（可能包含不该提交的内容）
 git add .
