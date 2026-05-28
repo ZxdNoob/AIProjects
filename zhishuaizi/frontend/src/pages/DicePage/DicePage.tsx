@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button, Card, Typography, Space } from 'antd';
 import { BarChartOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
@@ -6,6 +6,7 @@ import Dice3D from './components/Dice3D';
 import DiceReadyIcon from './components/DiceReadyIcon';
 import DiceLogo from '../../components/DiceLogo';
 import HomeButton from '../../components/HomeButton';
+import ApiStatusPill from '../../components/ApiStatusPill';
 import { rollDice as apiRollDice } from '../../services/api';
 import './components/Dice3D.less';
 import './DicePage.less';
@@ -63,6 +64,7 @@ export default function DicePage() {
             </Title>
           </div>
           <div className="dice-pc-header-actions">
+            <ApiStatusPill />
             <HomeButton />
             <Button
               icon={<BarChartOutlined />}

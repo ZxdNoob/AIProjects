@@ -1,4 +1,3 @@
-import React from "react";
 import "./DiceLogo.less";
 
 interface DiceLogoProps {

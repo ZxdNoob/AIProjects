@@ -10,6 +10,21 @@ const PORT = 3001;
 app.use(cors());
 app.use(express.json());
 
+function sendOk(res, data, meta) {
+  res.json({ data, meta: meta || { ts: new Date().toISOString() } });
+}
+
+function sendError(res, status, message, code, details) {
+  res.status(status).json({
+    error: {
+      message,
+      code: code || 'UNKNOWN',
+      details: details || null,
+    },
+    meta: { ts: new Date().toISOString() },
+  });
+}
+
 // 初始化数据库
 if (initDB) {
   initDB();
@@ -66,7 +81,7 @@ function weightedRandomDice() {
 
 // 健康检查接口
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  sendOk(res, { status: 'ok', service: 'zhishuaizi-api' });
 });
 
 // 掷骰子接口
@@ -77,7 +92,7 @@ app.post('/api/roll', (req, res) => {
     incrementPoint(point, (err) => {
       if (err) {
         console.error('更新统计数据失败:', err);
-        return res.status(500).json({ error: '数据库更新失败' });
+        return sendError(res, 500, '数据库更新失败', 'DB_UPDATE_FAILED');
       }
       // 保存历史记录
       addHistory(point, (err, lastID) => {
@@ -87,12 +102,12 @@ app.post('/api/roll', (req, res) => {
         } else {
           console.log(`历史记录保存成功: point=${point}, id=${lastID}`);
         }
-        res.json({ point });
+        sendOk(res, { point }, { id: lastID ?? null });
       });
     });
   } else {
     console.warn('数据库函数未定义: incrementPoint=', !!incrementPoint, 'addHistory=', !!addHistory);
-    res.json({ point });
+    sendOk(res, { point }, { degraded: true });
   }
 });
 
@@ -101,12 +116,12 @@ app.get('/api/stats', (req, res) => {
   if (getStats) {
     getStats((err, stats) => {
       if (err) {
-        return res.status(500).json({ error: '数据库查询失败' });
+        return sendError(res, 500, '数据库查询失败', 'DB_QUERY_FAILED');
       }
-      res.json({ stats });
+      sendOk(res, { stats });
     });
   } else {
-    res.json({ stats: [] });
+    sendOk(res, { stats: [] }, { degraded: true });
   }
 });
 
@@ -116,14 +131,14 @@ app.get('/api/history', (req, res) => {
     getHistory((err, history) => {
       if (err) {
         console.error('获取历史记录失败:', err);
-        return res.status(500).json({ error: '数据库查询失败' });
+        return sendError(res, 500, '数据库查询失败', 'DB_QUERY_FAILED');
       }
       console.log(`获取历史记录: ${history ? history.length : 0} 条记录`);
-      res.json({ history: history || [] });
+      sendOk(res, { history: history || [] });
     });
   } else {
     console.warn('getHistory 函数未定义');
-    res.json({ history: [] });
+    sendOk(res, { history: [] }, { degraded: true });
   }
 });
 
@@ -132,24 +147,24 @@ app.post('/api/version-history', (req, res) => {
   const { version, description, changeType } = req.body;
   
   if (!version || !changeType) {
-    return res.status(400).json({ error: '版本号和变更类型是必需的' });
+    return sendError(res, 400, '版本号和变更类型是必需的', 'BAD_REQUEST');
   }
   
   if (!['major', 'minor', 'patch'].includes(changeType)) {
-    return res.status(400).json({ error: '变更类型必须是 major、minor 或 patch' });
+    return sendError(res, 400, '变更类型必须是 major、minor 或 patch', 'BAD_REQUEST');
   }
   
   if (addVersionHistory) {
     addVersionHistory(version, description || '', changeType, (err, lastID) => {
       if (err) {
         console.error('添加版本历史失败:', err);
-        return res.status(500).json({ error: '数据库操作失败' });
+        return sendError(res, 500, '数据库操作失败', 'DB_WRITE_FAILED');
       }
       console.log(`版本历史添加成功: version=${version}, id=${lastID}`);
-      res.json({ success: true, id: lastID });
+      sendOk(res, { success: true, id: lastID });
     });
   } else {
-    res.status(500).json({ error: '数据库函数未定义' });
+    sendError(res, 500, '数据库函数未定义', 'SERVER_MISCONFIG');
   }
 });
 
@@ -159,14 +174,14 @@ app.get('/api/version-history', (req, res) => {
     getVersionHistory((err, history) => {
       if (err) {
         console.error('获取版本历史失败:', err);
-        return res.status(500).json({ error: '数据库查询失败' });
+        return sendError(res, 500, '数据库查询失败', 'DB_QUERY_FAILED');
       }
       console.log(`获取版本历史: ${history ? history.length : 0} 条记录`);
-      res.json({ history: history || [] });
+      sendOk(res, { history: history || [] });
     });
   } else {
     console.warn('getVersionHistory 函数未定义');
-    res.json({ history: [] });
+    sendOk(res, { history: [] }, { degraded: true });
   }
 });
 
@@ -176,14 +191,14 @@ app.get('/api/roadmap', (req, res) => {
     getRoadmapItems((err, items) => {
       if (err) {
         console.error('获取路线图需求失败:', err);
-        return res.status(500).json({ error: '数据库查询失败' });
+        return sendError(res, 500, '数据库查询失败', 'DB_QUERY_FAILED');
       }
       console.log(`获取路线图需求: ${items ? items.length : 0} 条记录`);
-      res.json({ items: items || [] });
+      sendOk(res, { items: items || [] });
     });
   } else {
     console.warn('getRoadmapItems 函数未定义');
-    res.json({ items: [] });
+    sendOk(res, { items: [] }, { degraded: true });
   }
 });
 
@@ -192,28 +207,28 @@ app.post('/api/roadmap', (req, res) => {
   const { title, description, status, priority, targetDate, sortOrder } = req.body;
   
   if (!title || !title.trim()) {
-    return res.status(400).json({ error: '标题是必需的' });
+    return sendError(res, 400, '标题是必需的', 'BAD_REQUEST');
   }
   
   if (!['planned', 'in-progress', 'completed'].includes(status || 'planned')) {
-    return res.status(400).json({ error: '状态必须是 planned、in-progress 或 completed' });
+    return sendError(res, 400, '状态必须是 planned、in-progress 或 completed', 'BAD_REQUEST');
   }
   
   if (!['high', 'medium', 'low'].includes(priority || 'medium')) {
-    return res.status(400).json({ error: '优先级必须是 high、medium 或 low' });
+    return sendError(res, 400, '优先级必须是 high、medium 或 low', 'BAD_REQUEST');
   }
   
   if (addRoadmapItem) {
     addRoadmapItem(title.trim(), description || '', status || 'planned', priority || 'medium', targetDate || null, sortOrder || 0, (err, lastID) => {
       if (err) {
         console.error('添加路线图需求失败:', err);
-        return res.status(500).json({ error: '数据库操作失败' });
+        return sendError(res, 500, '数据库操作失败', 'DB_WRITE_FAILED');
       }
       console.log(`路线图需求添加成功: title=${title}, id=${lastID}`);
-      res.json({ success: true, id: lastID });
+      sendOk(res, { success: true, id: lastID });
     });
   } else {
-    res.status(500).json({ error: '数据库函数未定义' });
+    sendError(res, 500, '数据库函数未定义', 'SERVER_MISCONFIG');
   }
 });
 
@@ -223,31 +238,31 @@ app.put('/api/roadmap/:id', (req, res) => {
   const { title, description, status, priority, targetDate, sortOrder } = req.body;
   
   if (!title || !title.trim()) {
-    return res.status(400).json({ error: '标题是必需的' });
+    return sendError(res, 400, '标题是必需的', 'BAD_REQUEST');
   }
   
   if (!['planned', 'in-progress', 'completed'].includes(status)) {
-    return res.status(400).json({ error: '状态必须是 planned、in-progress 或 completed' });
+    return sendError(res, 400, '状态必须是 planned、in-progress 或 completed', 'BAD_REQUEST');
   }
   
   if (!['high', 'medium', 'low'].includes(priority)) {
-    return res.status(400).json({ error: '优先级必须是 high、medium 或 low' });
+    return sendError(res, 400, '优先级必须是 high、medium 或 low', 'BAD_REQUEST');
   }
   
   if (updateRoadmapItem) {
     updateRoadmapItem(parseInt(id, 10), title.trim(), description || '', status, priority, targetDate || null, sortOrder || 0, (err, changes) => {
       if (err) {
         console.error('更新路线图需求失败:', err);
-        return res.status(500).json({ error: '数据库操作失败' });
+        return sendError(res, 500, '数据库操作失败', 'DB_WRITE_FAILED');
       }
       if (changes === 0) {
-        return res.status(404).json({ error: '需求不存在' });
+        return sendError(res, 404, '需求不存在', 'NOT_FOUND');
       }
       console.log(`路线图需求更新成功: id=${id}`);
-      res.json({ success: true });
+      sendOk(res, { success: true });
     });
   } else {
-    res.status(500).json({ error: '数据库函数未定义' });
+    sendError(res, 500, '数据库函数未定义', 'SERVER_MISCONFIG');
   }
 });
 
@@ -259,16 +274,16 @@ app.delete('/api/roadmap/:id', (req, res) => {
     deleteRoadmapItem(parseInt(id, 10), (err, changes) => {
       if (err) {
         console.error('删除路线图需求失败:', err);
-        return res.status(500).json({ error: '数据库操作失败' });
+        return sendError(res, 500, '数据库操作失败', 'DB_WRITE_FAILED');
       }
       if (changes === 0) {
-        return res.status(404).json({ error: '需求不存在' });
+        return sendError(res, 404, '需求不存在', 'NOT_FOUND');
       }
       console.log(`路线图需求删除成功: id=${id}`);
-      res.json({ success: true });
+      sendOk(res, { success: true });
     });
   } else {
-    res.status(500).json({ error: '数据库函数未定义' });
+    sendError(res, 500, '数据库函数未定义', 'SERVER_MISCONFIG');
   }
 });
 

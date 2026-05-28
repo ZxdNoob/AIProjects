@@ -82,7 +82,6 @@ export default function EllipsisTooltip({
   tooltipTitle,
 }: EllipsisTooltipProps) {
   const contentRef = useRef<HTMLDivElement>(null);
-  const [isOverflowing, setIsOverflowing] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
 
   // 检测文本是否溢出
@@ -100,7 +99,6 @@ export default function EllipsisTooltip({
           ? controlledShowTooltip
           : isOverflow;
 
-      setIsOverflowing(isOverflow);
       setShowTooltip(shouldShowTooltip);
     };
 

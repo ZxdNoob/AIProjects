@@ -76,7 +76,8 @@ function addHistory(point, callback) {
 // 获取历史记录
 function getHistory(callback) {
   db.all(
-    'SELECT point, timestamp FROM dice_history ORDER BY timestamp ASC',
+    // 兼容 SQLite 的 "YYYY-MM-DD HH:MM:SS" 字符串，并显式标注东八区，方便前端直接解析
+    "SELECT point, CASE WHEN instr(timestamp, 'T') > 0 THEN timestamp ELSE replace(timestamp, ' ', 'T') || '+08:00' END AS timestamp FROM dice_history ORDER BY timestamp ASC",
     [],
     (err, rows) => {
       callback(err, rows);

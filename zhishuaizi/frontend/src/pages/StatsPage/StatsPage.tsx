@@ -2,10 +2,9 @@ import React from 'react';
 import { Card, Typography, Table, Button } from 'antd';
 import { RollbackOutlined, ReloadOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import ReactECharts from 'echarts-for-react';
-import type { EChartsOption } from 'echarts';
 import DiceLogo from '../../components/DiceLogo';
 import HomeButton from '../../components/HomeButton';
+import ApiStatusPill from '../../components/ApiStatusPill';
 import { getStats, getHistory } from '../../services/api';
 import './StatsPage.less';
 
@@ -57,7 +56,7 @@ export default function StatsPage() {
   // 准备散点图数据
   const scatterData = history
     .filter(record => record && record.timestamp && record.point) // 过滤掉无效记录
-    .map((record, index) => {
+    .map((record) => {
       // 处理时间戳
       // SQLite存储的东八区时间格式为 "YYYY-MM-DD HH:MM:SS"
       // 需要转换为JavaScript Date能识别的格式，并明确指定为东八区时间
@@ -92,8 +91,8 @@ export default function StatsPage() {
   // 当数据点数量超过一定阈值时，显示缩放条（建议阈值：30个数据点以上）
   const showDataZoom = scatterData.length > 30;
 
-  // ECharts 配置
-  const scatterOption: EChartsOption = {
+  // ECharts 配置（用 any 避免在首屏引入 echarts 类型）
+  const scatterOption: any = {
     title: {
       text: '掷骰子时间分布',
       left: 'center',
@@ -174,7 +173,7 @@ export default function StatsPage() {
       min: 0.5,
       max: 6.5,
       interval: 1,
-      boundaryGap: false,
+      boundaryGap: [0, 0],
       axisLabel: {
         show: true,
         formatter: (value: number) => {
@@ -280,6 +279,7 @@ export default function StatsPage() {
             </Title>
           </div>
           <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+            <ApiStatusPill />
             <HomeButton />
             <Button
               icon={<RollbackOutlined />}
@@ -324,7 +324,7 @@ export default function StatsPage() {
                 </div>
               ) : history.length > 0 ? (
                 <>
-                  <ReactECharts option={scatterOption} style={{ height: '400px', width: '100%' }} />
+                  <LazyECharts option={scatterOption} style={{ height: '400px', width: '100%' }} />
                   <div style={{ marginTop: 8, textAlign: 'center', color: '#999', fontSize: 12 }}>
                     共 {history.length} 条历史记录，显示 {scatterData.length} 个数据点
                   </div>
@@ -364,3 +364,20 @@ export default function StatsPage() {
     </div>
   );
 } 
+
+const LazyECharts = React.memo(function LazyECharts(props: any) {
+  const ECharts = React.useMemo(
+    () =>
+      React.lazy(async () => {
+        const mod = await import('echarts-for-react');
+        return { default: mod.default };
+      }),
+    []
+  );
+
+  return (
+    <React.Suspense fallback={<div style={{ height: 400, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>图表加载中...</div>}>
+      <ECharts {...props} />
+    </React.Suspense>
+  );
+});

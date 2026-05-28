@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Card,
   Typography,
@@ -28,10 +28,11 @@ import {
   UnorderedListOutlined,
   FieldTimeOutlined,
 } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import DiceLogo from '../../components/DiceLogo';
 import HomeButton from '../../components/HomeButton';
+import ApiStatusPill from '../../components/ApiStatusPill';
 import EllipsisTooltip from '../../components/EllipsisTooltip';
 import {
   getRoadmap,
@@ -76,7 +77,7 @@ export default function RoadmapPage() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingItem, setEditingItem] = useState<RoadmapItem | null>(null);
   const [form] = Form.useForm();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -246,9 +247,9 @@ export default function RoadmapPage() {
             </Space>
           </div>
           {item.description && (
-            <Text className="roadmap-item-description" ellipsis={{ rows: 3, expandable: false }}>
+            <Typography.Paragraph className="roadmap-item-description" ellipsis={{ rows: 3 }}>
               {item.description}
-            </Text>
+            </Typography.Paragraph>
           )}
           <div className="roadmap-item-footer">
             <Space size="small" className="roadmap-item-meta">
@@ -302,6 +303,7 @@ export default function RoadmapPage() {
             </Title>
           </div>
           <div style={{ display: 'flex', gap: 12 }}>
+            <ApiStatusPill />
             <HomeButton />
             <Button
               icon={<ReloadOutlined />}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -8,11 +8,9 @@ import {
 
 // 获取路由基础路径，支持 GitHub Pages 子目录部署
 const basename = import.meta.env.BASE_URL || '/';
-import { Button, Card, Typography, Space, ConfigProvider, Carousel } from "antd";
+import { Button, Card, Typography, ConfigProvider, Carousel } from "antd";
 import zhCN from "antd/locale/zh_CN";
 import { 
-  HistoryOutlined, 
-  BarChartOutlined, 
   PlayCircleOutlined,
   ThunderboltOutlined,
   LineChartOutlined,

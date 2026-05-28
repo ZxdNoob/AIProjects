@@ -1,14 +1,14 @@
 import React from 'react';
-import { Card, Typography, Button, Tag, Empty, Collapse, Space, Pagination, Switch } from 'antd';
+import { Typography, Button, Tag, Empty, Collapse, Space, Pagination, Switch } from 'antd';
 import { RollbackOutlined, ReloadOutlined, CalendarOutlined, UnorderedListOutlined, AppstoreOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import DiceLogo from '../../components/DiceLogo';
 import HomeButton from '../../components/HomeButton';
+import ApiStatusPill from '../../components/ApiStatusPill';
 import { getVersionHistory } from '../../services/api';
 import './VersionHistoryPage.less';
 
 const { Title, Text } = Typography;
-const { Panel } = Collapse;
 
 interface VersionRecord {
   id: number;
@@ -26,7 +26,7 @@ export default function VersionHistoryPage() {
   const [currentPage, setCurrentPage] = React.useState(1);
   const [pageSize, setPageSize] = React.useState(10);
   const [accordionMode, setAccordionMode] = React.useState(true); // true: 一次只展开一个, false: 可展开多个
-  const [activeKeys, setActiveKeys] = React.useState<React.Key[]>([]);
+  const [activeKeys, setActiveKeys] = React.useState<Array<string | number>>([]);
   const navigate = useNavigate();
 
   const loadData = React.useCallback(async () => {
@@ -61,8 +61,8 @@ export default function VersionHistoryPage() {
       const start = (currentPage - 1) * pageSize;
       const end = start + pageSize;
       const currentPageData = history.slice(start, end);
-      const currentPageKeys = currentPageData.map((record, index) => record.id || index);
-      setActiveKeys((prevKeys) => prevKeys.filter((key) => currentPageKeys.includes(key)));
+      const currentPageKeys = currentPageData.map((record, index) => (record.id ?? index) as number);
+      setActiveKeys((prevKeys) => prevKeys.filter((key) => currentPageKeys.includes(Number(key))));
     }
   }, [currentPage, pageSize, history]);
 
@@ -128,13 +128,17 @@ export default function VersionHistoryPage() {
   };
 
   // 处理展开/收起变化
-  const handleCollapseChange = (keys: React.Key | React.Key[]) => {
+  const handleCollapseChange = (keys: string | number | Array<string | number>) => {
     if (accordionMode) {
-      // accordion 模式：keys 是单个 key 或 undefined
-      setActiveKeys(keys ? [keys as React.Key] : []);
+      // accordion 模式：保证只保留一个 key
+      if (Array.isArray(keys)) {
+        setActiveKeys(keys.length > 0 ? [keys[0]] : []);
+        return;
+      }
+      setActiveKeys(keys !== undefined && keys !== null ? [keys] : []);
     } else {
       // 多选模式：keys 是数组
-      setActiveKeys(keys as React.Key[]);
+      setActiveKeys(Array.isArray(keys) ? keys : keys !== undefined && keys !== null ? [keys] : []);
     }
   };
 
@@ -166,6 +170,7 @@ export default function VersionHistoryPage() {
             </Title>
           </div>
           <div style={{ display: 'flex', gap: 12 }}>
+            <ApiStatusPill />
             <HomeButton />
             <Button
               icon={<ReloadOutlined />}
@@ -228,12 +233,12 @@ export default function VersionHistoryPage() {
               </div>
               <Collapse
                 accordion={accordionMode}
-                activeKey={accordionMode ? (activeKeys[0] || undefined) : activeKeys}
+                activeKey={accordionMode ? (activeKeys[0] ?? undefined) : activeKeys}
                 onChange={handleCollapseChange}
                 expandIconPosition="end"
                 className="version-history-accordion"
                 items={currentPageData.map((record, index) => ({
-                  key: record.id || index,
+                  key: record.id ?? index,
                   label: renderPanelHeader(record),
                   children: (
                     <div className="version-panel-content">
